@@ -79,3 +79,5 @@ Now looking at the profile of individual borrowers, we produce the following plo
 
 <img src="./images/borrower_profile.png"/>
 
+From this, we can conclude the following points:
+-  The average 
