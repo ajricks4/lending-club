@@ -54,5 +54,10 @@ The exact $ (expressed in millions )values are as follows:
 
 </p>
 
+Speficially, we can see that Lending Club does a good job rating its loans, with each consecutive grade slightly producing more bad debt than the previous grade. 
 
+To get a sense of how Lending Club's loans are dispersed throughout the U.S., we can view the two below plots:
 
+<img src="./images/state_choro_loan_total.html"/>
+
+<img src="./images/state_choro_loan_count_total.html"/>
