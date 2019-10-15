@@ -112,9 +112,9 @@ def choro_debt_state(df):
     layout = dict(geo={'scope':'usa'})
 
     choromap = go.Figure(data=[data],layout=layout)
-    choromap.update_layout(title_text='Lending Club Loan Originations',geo_scope='usa')
-    plotly.offline.plot(choromap, filename = 'state_choro_loan_total.html', auto_open=False)
-    iplot(choromap,validate=False, filename='state_choro',image='png')
+    choromap.update_layout(title_text='Lending Club Loan Originations Per State',geo_scope='usa')
+    plotly.offline.plot(choromap, filename = './images/state_choro_loan_total.png', auto_open=False)
+    iplot(choromap,validate=False, filename='./images/state_choro',image='png')
 
 def choro_debt_state_count(df):
     """
@@ -147,9 +147,9 @@ def choro_debt_state_count(df):
     layout = dict(geo={'scope':'usa'})
 
     choromap = go.Figure(data=[data],layout=layout)
-    choromap.update_layout(title_text='Lending Club Loan Originations',geo_scope='usa')
-    plotly.offline.plot(choromap, filename = 'state_choro_loan_total.html', auto_open=False)
-    iplot(choromap,validate=False, filename='state_choro',image='png')
+    choromap.update_layout(title_text='Lending Club Loan Count Per State',geo_scope='usa')
+    plotly.offline.plot(choromap, filename = './images/state_choro_loan_count_total.png', auto_open=False)
+    iplot(choromap,validate=False, filename='./images/state_choro',image='png')
 
 def lc_time_series(df1):
     """
@@ -214,7 +214,7 @@ def lc_individual_profile(df_original):
     df['loan_outcome'] = df['loan_status'].apply(lambda x: 1 if (x=='Current') or (x=='Fully Paid') else 0)
     fig = plt.figure(figsize=(20,20))
     ax1 = fig.add_subplot(2,2,1)
-    ax1 = sns.distplot(df['loan_amnt'])
+    ax1 = sns.violinplot(df['loan_amnt'])
     plt.xlabel('Loan Amount',fontsize=20)
     plt.ylabel('Distribution',fontsize=20)
     plt.title('Loan Amount',fontsize=25,fontweight='bold')
