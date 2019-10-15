@@ -116,6 +116,41 @@ def choro_debt_state(df):
     plotly.offline.plot(choromap, filename = 'state_choro_loan_total.html', auto_open=False)
     iplot(choromap,validate=False, filename='state_choro',image='png')
 
+def choro_debt_state_count(df):
+    """
+    Plots choromap at state level of debt originations and chargeoffs
+
+    Params:
+    df (pd.DataFrame): Lending Club dataframe
+    """
+
+    outcome_df = df.groupby(['addr_state','loan_status']).count()['loan_amnt'].reset_index()
+    outcome_df['loan_amnt'] = round(outcome_df['loan_amnt'] / 1000,1)
+    total_loans = outcome_df.groupby('addr_state').sum()['loan_amnt']
+    text = []
+    for i in total_loans.index:
+        charge = outcome_df[(outcome_df['addr_state'] == i) & (outcome_df['loan_status'] =='Charged Off')]['loan_amnt'].values[0]
+        paid = outcome_df[(outcome_df['addr_state'] == i) & (outcome_df['loan_status'] =='Fully Paid')]['loan_amnt'].values[0]
+        try:
+            current = outcome_df[(outcome_df['addr_state'] == i) & (outcome_df['loan_status'] =='Current')]['loan_amnt'].values[0]
+        except:
+            current = 0
+        try:
+            others = outcome_df[(outcome_df['addr_state'] == i) & (outcome_df['loan_status'] !='Current') & (outcome_df['loan_status'] !='Fully Paid') & (outcome_df['loan_status'] !='Charged Off')]['loan_amnt'].values[0]
+        except:
+            others=0
+        text.append('{}: <br> Fully Paid: {}K  <br> Current: {}K <br> Charged Off: {}K <br> Late / In Default / Grace Period {}K'.format(i,paid,current,charge,others))
+    data = dict(type='choropleth',locations=total_loans.index,
+            locationmode='USA-states',colorscale='Blues',
+           z = total_loans.values,colorbar = {'title':'Loan Count (thousands)'},
+            text = text)
+    layout = dict(geo={'scope':'usa'})
+
+    choromap = go.Figure(data=[data],layout=layout)
+    choromap.update_layout(title_text='Lending Club Loan Originations',geo_scope='usa')
+    plotly.offline.plot(choromap, filename = 'state_choro_loan_total.html', auto_open=False)
+    iplot(choromap,validate=False, filename='state_choro',image='png')
+
 def lc_time_series(df1):
     """
     Plots an overlay of cumulative loan growth and lending club stock price over lending club
