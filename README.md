@@ -59,8 +59,23 @@ Speficially, we can see that Lending Club does a good job rating its loans, with
 To get a sense of how Lending Club's loans are dispersed throughout the U.S., we can view the two below plots:
 (Please note that the plots below are .png file representations of an interactive .html file. The html files are saved in the images repository and can be re-created using code found in the src repository)
 
-<img src="./images/state_choro_loan_total.png"/>
-<img src="./images/state_choro_loan_count_total.png"/>
+<img src="./images/state_loan_originations.png"/>
+<img src="./images/state_loan_count.png"/>
 
+The two plots confirm what may have already been suspected. The largest loan volume is coming from CA, TX, NY, and FL. However, when we look average loan size, we find the following:
+<p align="center">
+  
+|State| Avg Loan Size|
+|-----|--------------|
+|CA| $15.5K |
+|FL| $14.6K|
+|NY| $15.0K|
+|TX| $15.9K|
 
+</p>
+Which are considerably less than AK, with an avg loan size of $17.4K.
+
+Now looking at the profile of individual borrowers, we produce the following plots:
+
+<img src="./images/borrower_profile.png"/>
 
