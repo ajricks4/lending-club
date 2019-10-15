@@ -17,7 +17,7 @@ Because we have loans dating back to 2007, we can start by viewing a time series
 The loans on Lending Club are classified in 9 categories: Fully Paid, Current, Charged Off, Late (31-120 days), In Grace Period, Late (16-30 days), Does not meet the credit policy. Status:Fully Paid, Does not meet the credit policy. Status:Charged Off, Default. Below, we have grouped up the loan categories including late, in grace period and in default to show overall, what the Lending Club loan platform has originated.
 
 <p align="left">
-<img src="./images/lc_loan_status.png" width = 10000 />
+<img src="./images/lc_loan_status.png" width = 9000 />
 </p>
 
 Post-IPO, Lending CLub's strongest month was Mar'16 when it originated $949.4M in loans on its platform. Since IPO, Lending Club has posted strong yearly loan origination numbers as seen below:
