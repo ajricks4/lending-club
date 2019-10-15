@@ -80,4 +80,12 @@ Now looking at the profile of individual borrowers, we produce the following plo
 <img src="./images/borrower_profile.png"/>
 
 From this, we can conclude the following points:
--  The average 
+-  Loan amounts spike around large round numbers and have more density in the < $20,000.00 range
+-  The FICO distribution of funded loans has a clear cutoff at ~650 and is right skewed with a large mass less than 700 (considered as the cutoff between a good vs mediocre credit score)
+-  A large % of the borrowers have been at their job for a long time, as represented by the large column at the 10 tick. The data lumps in any worker who has worked over 10 years at their current role with those that have been at their current role for exactly 10 years.
+-  Almost half of all borrowers have a mortgage with another ~ 40% renting. Only 11.2% own their property, meaning that most borrowers in the data set will have a monthly obligation to rent or a mortgage which will have a large effect on underwriting and credit risk rating.
+
+
+
+
+## Evaluating Returns
