@@ -20,7 +20,8 @@ Lending Club, at loan origination, gives a loan a grade of A to G and a subgrade
 
 <img src="./images/lc_grade_pie.png"/>
 
-The exact $ values are as follows
+The exact $ values are as follows:
+
 | Grade| Principal Paid Off| Outstanding| Bad Debt|
 |:-----|:------------------|:-----------|:--------|
 | A    | $5,050.3M         | $2,440.4M  | $146.6M |
@@ -28,3 +29,9 @@ The exact $ values are as follows
 | B    | $7,196.7M         | $2,884.8M  | $553.5M |
 |:-----|:------------------|:-----------|:--------|
 
+<p align="center">
+
+|Column1|Column1|Column1|
+|:----|:----:|----:|
+|Column1|Column1|Column1|
+</p>
