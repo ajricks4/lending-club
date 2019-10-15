@@ -19,3 +19,9 @@ As we can see here, ~85% of Lending Club loans fall under the Fully Paid or Curr
 Lending Club, at loan origination, gives a loan a grade of A to G and a subgrade of 1 to 5 indicating the financial rating of the borrower based on a proprietary model. The model outputs a number ranging from 1 - 25 which is then translated to a grade and a subgrade. For example, a model rank of 6 would correspond to B1. To dive further into how Lending Club loans perform by grade, we have the below plot:
 
 <img src="./images/lc_grade_pie.png"/>
+
+The exact $ values are as follows
+| Grade| Principal Paid Off| Outstanding| Bad Debt|
+|------|-------------------|------------|---------|
+| A    | $5,050.3M         | $2,440.4M  | $146.6M |
+| B    | $7,196.7M         | $2,884.8M  | $553.5M |
