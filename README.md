@@ -10,7 +10,9 @@ Lending Club has made their data public [here](https://help.lendingclub.com/hc/e
 
 ## A First Look
 
+The loans on Lending Club are classified in 9 categories: Fully Paid, Current, Charged Off, Late (31-120 days), In Grace Period, Late (16-30 days), Does not meet the credit policy. Status:Fully Paid, Does not meet the credit policy. Status:Charged Off, Default. Below, we have grouped up the loan categories including late, in grace period and in default to show overall, what the Lending Club loan platform has originated.
 
+<img src="./images/lc_loan_status.png"/>
 
-
+As we can see here, 
 
