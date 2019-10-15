@@ -18,6 +18,19 @@ The loans on Lending Club are classified in 9 categories: Fully Paid, Current, C
 
 <img src="./images/lc_loan_status.png"/>
 
+Post-IPO, Lending CLub's strongest month was Mar'16 when it originated $949.4M in loans on its platform. Since IPO, Lending Club has posted strong yearly loan origination numbers as seen below:
+<p align="center">
+  
+|Year|Amount|
+|:---|:-----|
+|2015|$6.4B|
+|2016|$6.4B|
+|2017|$6.6B|
+|2018|$7.9B|
+|2019|$4.1B|
+
+</p>
+
 As we can see here, ~85% of Lending Club loans fall under the Fully Paid or Current category, indicating that a sizable chunk of the loans available to investors are performing. To further break these loans down, we can analyze how Lending Club grades loans. 
 
 Lending Club, at loan origination, gives a loan a grade of A to G and a subgrade of 1 to 5 indicating the financial rating of the borrower based on a proprietary model. The model outputs a number ranging from 1 - 25 which is then translated to a grade and a subgrade. For example, a model rank of 6 would correspond to B1. To dive further into how Lending Club loans perform by grade, we have the below plot:
