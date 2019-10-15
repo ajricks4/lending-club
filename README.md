@@ -73,4 +73,9 @@ The two plots confirm what may have already been suspected. The largest loan vol
 |TX| $15.9K|
 
 </p>
+Which are considerably less than AK, with an avg loan size of $17.4K.
+
+Now looking at the profile of individual borrowers, we produce the following plots:
+
+<img src="./images/borrower_profile.png"/>
 
