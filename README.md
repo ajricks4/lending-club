@@ -63,10 +63,14 @@ To get a sense of how Lending Club's loans are dispersed throughout the U.S., we
 <img src="./images/state_loan_count.png"/>
 
 The two plots confirm what may have already been suspected. The largest loan volume is coming from CA, TX, NY, and FL. However, when we look average loan size, we find the following:
-
+<p align="center">
+  
 |State| Avg Loan Size|
+|-----|--------------|
 |CA| $15.5K |
 |FL| $14.6K|
 |NY| $15.0K|
 |TX| $15.9K|
+
+</p>
 
