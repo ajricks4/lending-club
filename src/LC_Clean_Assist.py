@@ -56,7 +56,7 @@ def clean_lc_for_models(df_original):
                 'emp_title','desc','title','mths_since_last_delinq','mths_since_last_record','mths_since_last_major_derog',
                 'delinq_amnt','mths_since_recent_bc','num_sats','num_tl_op_past_12m','percent_bc_gt_75','tax_liens',
                 'total_bal_ex_mort','sec_app_revol_util','sec_app_collections_12_mths_ex_med','sec_app_mths_since_last_major_derog',
-                'initial_list_status','all_util','inq_fi','inq_last_12m','pub_rec_bankruptcies'
+                'initial_list_status','all_util','inq_fi','inq_last_12m','pub_rec_bankruptcies','recoveries','charged_off_amnt'
                 ] + [j for j in df.columns if 'hardship' in j.lower()]
     df.drop(drop_cols,axis=1,inplace=True)
     df['FICO'] = df.apply(lambda row: clean_ij_fico(row),axis=1)
@@ -97,7 +97,7 @@ def clean_lc_for_models(df_original):
                 'purpose','application_type','FICO','DTI','annual_income','emp_length','home_ownership',
                 'addr_state','earliest_cr_line','negative_activity','inq_last_6mths','delinq_2yrs',
                 'verified','open_accts','mortgage_accts','tot_cur_bal', 'revolving','revol_util','loan_status',
-                'total_pymnt','charged_off_amnt','recoveries']]
+                'total_pymnt']]
     return df_final
 
 def clean_ij_pub_rec(row):
