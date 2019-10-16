@@ -10,6 +10,8 @@ Lending Club has made their data public [here](https://help.lendingclub.com/hc/e
 
 ## A First Look
 
+#### Historical Performance
+
 Because we have loans dating back to 2007, we can start by viewing a time series of Lending Club's loans originated per month. The below plot also overlays a plot of the cumulative loan growth as well as Lending Club's stock (NYSE:LC) to see whether loan growth has translated into market capitalization. The below plot also shows (red marker) the date at which Lending Club IPO'ed. 
 
 <img src="./images/lc_time_series.png"/>
