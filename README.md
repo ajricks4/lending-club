@@ -31,6 +31,8 @@ Post-IPO, Lending CLub's strongest month was Mar'16 when it originated $949.4M i
 
 </p>
 
+#### Understanding the Loan Mix
+
 The loans on Lending Club are classified in 5 categories: Fully Paid, Current, Charged Off, Late (31-120 days), In Grace Period, Late (16-30 days), Does not meet the credit policy. Status:Fully Paid, Does not meet the credit policy. Status:Charged Off, Default. Below, we have grouped up the loan categories including late, in grace period and in default to show overall, what the Lending Club loan platform has originated.
 
 <p align="left">
@@ -60,6 +62,8 @@ The exact $ (expressed in millions )values are as follows:
 
 Speficially, we can see that Lending Club does a good job rating its loans, with each consecutive grade slightly producing more bad debt than the previous grade. 
 
+#### Geographies
+
 To get a sense of how Lending Club's loans are dispersed throughout the U.S., we can view the two below plots:
 (Please note that the plots below are .png file representations of an interactive .html file. The html files are saved in the images repository and can be re-created using code found in the src repository)
 
@@ -78,6 +82,8 @@ The two plots confirm what may have already been suspected. The largest loan vol
 
 </p>
 Which are considerably less than AK, with an avg loan size of $17.4K.
+
+#### Individuals
 
 Now looking at the profile of individual borrowers, we produce the following plots:
 
