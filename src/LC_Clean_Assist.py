@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 def clean_lc_for_plotting(df_original):
@@ -51,7 +52,11 @@ def clean_lc_for_models(df_original):
                 'num_il_tl','num_op_rev_tl','num_rev_accts','num_rev_tl_bal_gt_0','num_tl_120dpd_2m',
                 'num_tl_30dpd','pct_tl_nvr_dlq','pymnt_plan','url','zip_code','loan_amnt','funded_amnt_inv',
                 'out_prncp','out_prncp_inv','total_pymnt_inv','total_rec_prncp','total_rec_int','il_util',
-                'avg_cur_bal','sec_app_num_rev_accts','total_rev_hi_lim','total_acc','total_rec_late_fee'
+                'avg_cur_bal','sec_app_num_rev_accts','total_rev_hi_lim','total_acc','total_rec_late_fee',
+                'emp_title','desc','title','mths_since_last_delinq','mths_since_last_record','mths_since_last_major_derog',
+                'delinq_amnt','mths_since_recent_bc','num_sats','num_tl_op_past_12m','percent_bc_gt_75','tax_liens',
+                'total_bal_ex_mort','sec_app_revol_util','sec_app_collections_12_mths_ex_med','sec_app_mths_since_last_major_derog',
+                'initial_list_status','all_util','inq_fi','inq_last_12m','pub_rec_bankruptcies'
                 ] + [j for j in df.columns if 'hardship' in j.lower()]
     df.drop(drop_cols,axis=1,inplace=True)
     df['FICO'] = df.apply(lambda row: clean_ij_fico(row),axis=1)
@@ -66,11 +71,40 @@ def clean_lc_for_models(df_original):
     df.drop(['verification_status','verification_status_joint'],inplace=True,axis=1)
     df['open_accts'] = df.apply(lambda row: clean_ij_open_acc(row),axis=1)
     df.drop(['open_acc','sec_app_open_acc'],inplace=True,axis=1)
+    df['revolving'] = df.apply(lambda row: clean_ij_revol(row),axis=1)
+    df.drop(['revol_bal','revol_bal_joint'],inplace=True,axis=1)
+    df[['pub_rec','chargeoff_within_12_mths','num_accts_ever_120_pd','num_tl_90g_dpd_24m','sec_app_chargeoff_within_12_mths']].fillna(0,inplace=True)
+    df['negative_activity'] = df.apply(lambda row: clean_ij_pub_rec(row),axis=1)
+    df.drop(['pub_rec','chargeoff_within_12_mths','num_accts_ever_120_pd','num_tl_90g_dpd_24m','sec_app_chargeoff_within_12_mths'],axis=1,inplace=True)
+    df['issue_d_year'] = df['issue_d'].apply(lambda x: int(str(x).split('-')[0]))
+    df['loan_status'] = df['loan_status'].apply(lambda x: 1 if x == 'Fully Paid' else 0)
+    df['delinq_2yrs'].fillna(0,inplace=True)
+    df['tot_cur_bal'].fillna(np.mean(df['tot_cur_bal']),inplace=True)
+    df['FICO'].fillna(np.mean(df['FICO']),inplace=True)
+    df['DTI'].fillna(np.mean(df['DTI']),inplace=True)
+    df['annual_income'].fillna(np.mean(df['annual_income']),inplace=True)
+    df['mortgage_accts'].fillna(0,inplace=True)
+    df['open_accts'].fillna(0,inplace=True)
+    df['revolving'].fillna(0,inplace=True)
+    df['earliest_cr_line'] = df.apply(lambda row: row['issue_d_year'] if str(row['earliest_cr_line']).lower() == 'nan' else row['earliest_cr_line'],axis=1)
+    df['earliest_cr_line'] = df['earliest_cr_line'].apply(lambda x: int(str(x).lower().strip('abcdefghijklmnopqrstuvwxyz-')))
+    df['inq_last_6mths'].fillna(0,inplace=True)
+    df['revol_util'].fillna('0.00%',inplace=True)
+    df['negative_activity'].fillna(0,inplace=True)
+    df['revol_util'] = df['revol_util'].apply(lambda x: float(str(x).strip('%')))
+    df.drop('issue_d',axis=1,inplace=True)
+    df_final = df[['issue_d_year','grade','sub_grade','funded_amnt','term','int_rate','installment',
+                'purpose','application_type','FICO','DTI','annual_income','emp_length','home_ownership',
+                'addr_state','earliest_cr_line','negative_activity','inq_last_6mths','delinq_2yrs',
+                'verified','open_accts','mortgage_accts','tot_cur_bal', 'revolving','revol_util','loan_status',
+                'total_pymnt','charged_off_amnt','recoveries']]
+    return df_final
 
-    return df
-
-
-
+def clean_ij_pub_rec(row):
+    if row['application_type'] == 'Individual':
+        return row['pub_rec'] + row['chargeoff_within_12_mths'] + row['num_accts_ever_120_pd'] + row['num_tl_90g_dpd_24m']
+    else:
+        return row['pub_rec'] + row['chargeoff_within_12_mths'] + row['num_accts_ever_120_pd'] + row['num_tl_90g_dpd_24m'] +row['sec_app_chargeoff_within_12_mths']
 
 
 
@@ -102,17 +136,22 @@ def clean_ij_ver_stat(row):
     if row['application_type'] == 'Individual':
         return row['verification_status']
     else:
-        if ('Not Verified' in row['verification_status']) or ('Not Verified' in row['verification_status_joint']):
+        if (row['verification_status'] == 'Not Verified') or (row['verification_status_joint'] == 'Not Verified'):
             return 'Not Verified'
-        elif ('Source Verified' in row['verification_status']) or ('Source Verified' in row['verification_status_joint']):
-            return 'Source Verified'
-        else:
+        elif (row['verification_status'] == 'Verified') and (row['verification_status_joint'] == 'Verified'):
             return 'Verified'
+        else:
+            return 'Source Verified'
 def clean_ij_open_acc(row):
     if row['application_type'] == 'Individual':
         return row['open_acc']
     else:
         return (row['open_acc'] + row['sec_app_open_acc'])/2
+def clean_ij_revol(row):
+    if row['application_type'] == 'Individual':
+        return row['revol_bal']
+    else:
+        return row['revol_bal_joint']
 
 
 
