@@ -255,7 +255,7 @@ def lc_returns(df):
     grouped.drop(['funded_amnt','total_pymnt'],axis=1,inplace=True)
     return grouped
 
-def lc_returns(returns):
+def lc_plot_returns(returns):
     fig = plt.figure(figsize=(30,30))
     ax1 = fig.add_subplot(1,1,1)
     ax1.bar(returns['grade'],returns['return'])
@@ -267,7 +267,7 @@ def lc_returns(returns):
     plt.savefig('images/grade_returns.png')
     plt.show()
 
-def lc_annualized_returns(returns):
+def lc_plot_annualized_returns(returns):
     fig = plt.figure(figsize=(30,30))
     ax2 = fig.add_subplot(1,1,1)
     ax2.bar(returns['grade'],returns['annualized_pct'])

@@ -53,3 +53,11 @@ def lc_rfc_grid(X_train,y_train):
 
 def lc_xgb_grid(X_train,y_train):
     pass
+
+
+def lc_score(y_true,y_preds):
+    print(confusion_matrix(y_true,y_preds))
+    print('\n')
+    print(classification_report(y_true,y_preds))
+    print('\n')
+    print(accuracy_score(y_true,y_preds))
