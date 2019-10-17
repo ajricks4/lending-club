@@ -325,4 +325,5 @@ def lc_choose_proportion(df):
     plt.xlabel('Returns')
     plt.ylabel('Counts')
     plt.title('Distribution of Returns',fontsize=20,fontweight='bold')
+    plt.tight_layout()
     plt.savefig('images/proportion_eval.png')
