@@ -254,3 +254,27 @@ def lc_returns(df):
     grouped['annualized_pct'] = grouped['annualized_pct'].apply(lambda x: round(x,1))
     grouped.drop(['funded_amnt','total_pymnt'],axis=1,inplace=True)
     return grouped
+
+def lc_returns(returns):
+    fig = plt.figure(figsize=(30,30))
+    ax1 = fig.add_subplot(1,1,1)
+    ax1.bar(returns['grade'],returns['return'])
+    plt.title('Returns by Grade',fontsize=40,fontweight='bold')
+    plt.xlabel('Grade',fontdict={'size':40})
+    plt.ylabel('Return',fontdict={'size':40})
+    ax1.tick_params('x',labelsize=35)
+    ax1.tick_params('y',labelsize=35)
+    plt.savefig('images/grade_returns.png')
+    plt.show()
+
+def lc_annualized_returns(returns):
+    fig = plt.figure(figsize=(30,30))
+    ax2 = fig.add_subplot(1,1,1)
+    ax2.bar(returns['grade'],returns['annualized_pct'])
+    plt.title('Annualized Returns by Grade',fontsize=40,fontweight='bold')
+    plt.xlabel('Grade',fontdict={'size':40})
+    plt.ylabel('Annualized Return',fontdict={'size':40})
+    ax2.tick_params('x',labelsize=35)
+    ax2.tick_params('y',labelsize=35)
+    plt.savefig('images/grade_annualized_returns.png')
+    plt.show()
