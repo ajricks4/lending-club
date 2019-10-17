@@ -185,12 +185,11 @@ From the chart, we can see that optimizing for a higher accuracy actually is cau
 
 Also from the charts, it appears that having a greated proportion of charged-off loans in our set improves our model returns. This may be because the model will experience more charge-offs and thus predict negatively more often, thereby increasing our precision and returns. Moving forward, we will choose the proportion that seemed to do best: 0.5, that is to say we will have twice as many Charged-Off loans as Fully Paid loans in our training set.
 
-#### Choosing Models and Tuning Hyperparameters
+## Model Evaluation
 
+#### Logistic Regression
 
-
-
-
-
-
-## Tuned Model Evaluation
+Hyperparameters:
+-  C:
+-  solver: 
+-  penalty:
