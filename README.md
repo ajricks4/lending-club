@@ -107,7 +107,7 @@ Because Lending Club asigns grades to their loans, we can evaluate the returns b
 
 <img src="./images/grade_returns.png"/>
 
-<img src="./grade_annualized_returns.png"/>
+<img src="./images/grade_annualized_returns.png"/>
 
 From the two plots, we can see that the highest performing group is the 36 month term B loans with a return of 5.7% and an annualized return of 1.9%. Most surprisingly, we find that the rate of return of Lending Club loans by grade and term length are extremely low compared to the risk in investing in unsecured peer-to-peer loans. We will benchmark our algorithms against these rates of returns:
 
