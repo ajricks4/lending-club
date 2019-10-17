@@ -130,6 +130,40 @@ From the two plots, we can see that the highest performing group is the 36 month
 
 ## Data Cleaning / Transformation
 
+The data cleaning process included the following:
+-  Removing the loans that have not yet paid off / charged-off. We only want to look at the loans that have completed their maturity so that we can see how a loan performed over the course of the term. Including loans that are currently being paid off would throw off any algorithms as loans that may charge-off in the future may still presently be current.
+
+-  Cleaning Features: The majority of this work involved dropping features that would not have been available at the time of loan underwriting as well as converting variables to usable numerical types, whether in the form of scaled numerical features or as a one-hot encoded feature for categorical data. Further, because applications can take on the categories: Individual or Joint, we need to adjust other features that are dependent on this category. 
+
+The initial cleaned data set yielded the following features: 
+issue year:
+grade: 
+subgrade:
+funded amount: 
+term:
+interest rate:
+installment:
+purpose:
+application type:
+FICO:
+DTI:
+annual income:
+employment length:
+home ownership:
+address state:
+earliest credit line:
+negative activity:
+inquiries within the last 6 months:
+Delinquencies within the last 6 months:
+Verified:
+Open accounts:
+Mortgage Accounts:
+Total Current Balance:
+Revolving:
+Revolving Utilization:
+Loan Status:
+Total Payment:
+
 ## Training Models
 
 ## Tuned Model Evaluation
