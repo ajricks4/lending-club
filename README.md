@@ -190,6 +190,36 @@ Also from the charts, it appears that having a greated proportion of charged-off
 #### Logistic Regression
 
 Hyperparameters:
--  C:
--  solver: 
--  penalty:
+-  C: 
+-  solver: liblinear
+-  penalty: l1,l2
+-  cv: 3
+
+Results:
+
+#### RandomForestClassifier
+
+Hyperparameters:
+-  
+-  
+
+Results:
+
+#### GradientBoostingClassifier
+
+Hyperparameters:
+-  
+-  
+
+Results:
+
+#### XGradientBoostingClassifier
+
+Hyperparameters:
+-  
+-  
+
+Results:
+
+#### Neural Net
+
