@@ -241,3 +241,16 @@ def lc_individual_profile(df_original):
 
     plt.savefig('images/borrower_profile.png')
     plt.show()
+
+
+def lc_returns(df):
+    grouped = df.groupby(['grade','term']).sum()[['funded_amnt','total_pymnt']]
+    grouped.reset_index(inplace=True)
+    grouped['return'] = (grouped['total_pymnt'] / grouped['funded_amnt'] - 1)*100
+    grouped['annualized_pct'] = ((((grouped['return']/100)+1) ** (1 / (grouped['term']/12))) - 1)*100
+    grouped['return_formatted'] = grouped['return'].apply(lambda x: str(round(x,1)) + '%')
+    grouped['annualized_return_formatted'] = grouped['annualized_pct'].apply(lambda x: str(round(x,1)) + '%')
+    grouped['return'] = grouped['return'].apply(lambda x: round(x,1))
+    grouped['annualized_pct'] = grouped['annualized_pct'].apply(lambda x: round(x,1))
+    grouped.drop(['funded_amnt','total_pymnt'],axis=1,inplace=True)
+    return grouped
