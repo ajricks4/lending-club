@@ -166,6 +166,8 @@ The initial cleaned data set yielded the following features:
 
 Note that the Loan Status feature is picked as our target variable and the Total Payment feature was kept in the dataset so as to calculate investing returns after training an algorithm.
 
+To transform the data, we apply Sklearn's StandardScaler and OneHotEncoder on the numerical and categorical features respectively. Now it is time to start Machine Learning!
+
 ## Training Models
 
 
