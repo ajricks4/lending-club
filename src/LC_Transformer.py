@@ -5,11 +5,11 @@ import pandas as pd
 def lc_transform(df_original):
     df = df_original.copy()
     num_features = ['issue_d_year','funded_amnt','int_rate','installment',
-    'FICO','DTI','annual_income','emp_length','earliest_cr_line',
+    'FICO','DTI','annual_income','emp_length',
     'negative_activity','inq_last_6mths','delinq_2yrs','open_accts',
     'mortgage_accts','tot_cur_bal','revolving','revol_util']
 
-    cat_features = ['grade','addr_state','term','purpose','application_type',
+    cat_features = ['grade','term','purpose','application_type',
     'home_ownership','verified']
     sc = StandardScaler()
     X1 = sc.fit_transform(df[num_features])
@@ -57,11 +57,15 @@ def lc_organize(scaled_df):
     return strat_train_x, strat_train_y, strat_train_extra, strat_test_x, strat_test_y, strat_test_extra, strat_valid_x,strat_valid_y, strat_valid_extra
 
 
-def lc_balance_sets(scaled_df):
+def lc_balance_sets(scaled_df,proportion = 1):
     X_train, X_test, y_train, y_test = train_test_split(scaled_df.iloc[:,:-1], scaled_df.iloc[:,-1], test_size=0.1, random_state=42)
     train_set = pd.concat([X_train,y_train],axis=1)
+
+
+
     class_0 = train_set[train_set['loan_status'] == 0]
-    class_1 = train_set[train_set['loan_status'] == 1].iloc[:class_0.shape[0],:]
+    size = int(proportion * class_0.shape[0])
+    class_1 = train_set[train_set['loan_status'] == 1].iloc[:size,:]
     train_set = pd.concat([class_0,class_1])
     X_train = train_set.iloc[:,:-1]
     y_train = train_set.iloc[:,-1]

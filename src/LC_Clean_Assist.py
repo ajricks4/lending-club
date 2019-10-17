@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 
+
 def clean_lc_for_plotting(df_original):
     """
     Takes in original LC data and returns a cleaned DataFrame for plotting
