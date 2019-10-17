@@ -127,3 +127,9 @@ From the two plots, we can see that the highest performing group is the 36 month
 |F|60|-1.7%|-0.3%|
 |G|36|-8.8%|-3.0%|
 |G|60|-5.3%|-1.1%|
+
+## Data Cleaning / Transformation
+
+## Training Models
+
+## Tuned Model Evaluation
