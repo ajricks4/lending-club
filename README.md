@@ -99,3 +99,31 @@ From this, we can conclude the following points:
 
 
 ## Evaluating Returns
+
+grade_returns.png
+grade_annualized_returns.png
+
+Because Lending Club asigns grades to their loans, we can evaluate the returns by grade on both an actual return and an annualized return basis. Also, because the loans can only take two different term lengths, 36 or 60 months, we can further divide the grades by term length. We hypothesize that the highest returns should be earned by 60 month rated B-D loans as these will have a greater return compared to their respective 36 month counterparts to compensate for the additional holding time required. Also, we expect these loans to outperform others by grade because A loans will have lower rates of return because they are considered the safest and the loans rated E-G will be expected to have high chargeoff rates, diminishing returns. 
+
+<img src="./images/grade_returns.png"/>
+
+<img src="./grade_annualized_returns.png"/>
+
+From the two plots, we can see that the highest performing group is the 36 month term B loans with a return of 5.7% and an annualized return of 1.9%. Most surprisingly, we find that the rate of return of Lending Club loans by grade and term length are extremely low compared to the risk in investing in unsecured peer-to-peer loans. We will benchmark our algorithms against these rates of returns:
+
+|Grade| Term | Return | Annualized Return|
+|-----|------|--------|------------------|
+|A|36|5.2%|1.7%|
+|A|60|3.3%|0.7%|
+|B|36|5.7%|1.9%|
+|B|60|3.5%|0.7%|
+|C|36|4.0%|1.3%|
+|C|60|2.5%|0.5%|
+|D|36|2.0%|0.7%|
+|D|60|1.4%|0.3%|
+|E|36|0.0%|0.0%|
+|E|60|1.2%|0.2%|
+|F|36|-1.2%|-0.4%|
+|F|60|-1.7%|-0.3%|
+|G|36|-8.8%|-3.0%|
+|G|60|-5.3%|-1.1%|
