@@ -170,5 +170,27 @@ To transform the data, we apply Sklearn's StandardScaler and OneHotEncoder on th
 
 ## Training Models
 
+####  Setting up the Training / Testing Split
+
+Our data is split roughly 80 / 20 amongst Fully Paid and Charged-Off loans. We want to start by observing how a basic model will predict with the proportion of the training set balanced and altered. Because we have the historical loan amounts and payoffs as well, we can see how changing the balance split of the target variable affects how our model generates returns. 
+
+#### Evaluating Target Variable Proportion / Scoring Measures
+
+Before we begin building a model, we must note the goal: Generate the highest amount of returns for a hypothetical loan portfolio. After running a series of proportions using a RandomForestClassifier with the default parameters, we produce the following:
+
+<img src="./images/grade_returns.png"/>
+
+
+From the chart, we can see that optimizing for a higher accuracy actually is causing our returns to decrease and that returns are rising with a higher precision. This makes sense because it is more important that we reduce our False Positives (Predicting a loan will payoff when in reality it charged-off) even at the expense of converting some of our True Positives (Predicting correctly a loan will payoff) to False Negatives (Predicting a loan will charge-off when in reality the loan will payoff). Therefore, we will choose to focus on optimizing our precision / returns moving forward. 
+
+Also from the charts, it appears that having a greated proportion of charged-off loans in our set improves our model returns. This may be because the model will experience more charge-offs and thus predict negatively more often, thereby increasing our precision and returns.
+
+#### Choosing Models and Tuning Hyperparameters
+
+
+
+
+
+
 
 ## Tuned Model Evaluation
