@@ -136,34 +136,37 @@ The data cleaning process included the following:
 -  Cleaning Features: The majority of this work involved dropping features that would not have been available at the time of loan underwriting as well as converting variables to usable numerical types, whether in the form of scaled numerical features or as a one-hot encoded feature for categorical data. Further, because applications can take on the categories: Individual or Joint, we need to adjust other features that are dependent on this category. 
 
 The initial cleaned data set yielded the following features: 
-issue year:
-grade: 
-subgrade:
-funded amount: 
-term:
-interest rate:
-installment:
-purpose:
-application type:
-FICO:
-DTI:
-annual income:
-employment length:
-home ownership:
-address state:
-earliest credit line:
-negative activity:
-inquiries within the last 6 months:
-Delinquencies within the last 6 months:
-Verified:
-Open accounts:
-Mortgage Accounts:
-Total Current Balance:
-Revolving:
-Revolving Utilization:
-Loan Status:
-Total Payment:
+Issue year: (Numerical) Year loan was issued
+Grade: (Categorical) Lending Club grade assigned to the loan
+Subgrade: (Categorical) Lending Club sub-grade assigned to the loan
+Funded amount: (Numerical) Loan amount funded
+Term: (Categorical) Term length of loan, can only take on values of either 36 months or 60 months
+Interest rate: Interest rate applied to the loan
+Installment: (Numerical) Monthly payment if the loan is funded
+Purpose: (Categorical) Purpose of the loan, includes credit card consolidation, deb
+Application type: (Categorical) Type of application, can take on either Individual or Joint Application
+FICO: (Numerical) FICO score of borrower, created by averaging the low and high range of the borrower's FICO scores
+DTI: (Numerical) Debt to Income Ratio of the borrower based on the monthly debt payments charged to the borrower versus monthly income
+Annual income: (Numerical) Annual salary of borrower
+Employment length: (Numerical) Years in current role
+Home ownership: (Categorical) Indicates whether a borrower owns a home, is paying off a mortgage, rents or has some other living situation
+Address state: (Categorical) Indicates state the borrower is applying from
+Earliest credit line: (Numerical) The earliest year the borrower had a credit line 
+Negative activity: (Numerical) Combination of counts of public record bankruptics and other credit adverse events
+Inquiries within the last 6 months: (Numerical) Count of times borrower's credit report was inquired upon within the last 6 months
+Delinquencies within the last 6 months: (Numerical) Count of delinquencies within the last 6 months
+Verified: (Categorical) Indicates whether the borrower's credit information was Verified, Source Verified, or Not Verified
+Open accounts: (Numerical) Count of open accounts the borrower has
+Mortgage Accounts: (Numerical) Count of open mortgage accounts the borrower has
+Total Current Balance: (Numerical) Total outstanding credit of borrower
+Revolving: (Numerical) Measures total revolving credit balance
+Revolving Utilization: (Numerical) Percentage measuring 
+Loan Status: (Categorical) Indicates whether loan was Fully Paid or Charged-Off
+Total Payment: (Numerical) Sum of payments borrower made on credit
+
+Note that the Loan Status feature is picked as our target variable and the Total Payment feature was kept in the dataset so as to calculate investing returns after training an algorithm.
 
 ## Training Models
+
 
 ## Tuned Model Evaluation
