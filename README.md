@@ -190,12 +190,19 @@ Also from the charts, it appears that having a greated proportion of charged-off
 #### Logistic Regression
 
 Hyperparameters:
--  C: 
+-  C: [1,2,3,4,5,6,7,8,9]
 -  solver: liblinear
--  penalty: l1,l2
+-  penalty: [l1,l2]
 -  cv: 3
 
 Results:
+-  Best Parameters:
+  -  C: 8
+  -  solver: liblinear
+  -  penalty: l2
+-  Precision: 93.0%
+-  Accuracy: 42.9%
+-  Returns: 6.6%
 
 #### RandomForestClassifier
 
