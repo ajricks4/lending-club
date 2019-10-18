@@ -218,4 +218,22 @@ Gradient Boosting: {'n_estimators': 50, 'max_depth': 6, 'learning_rate': 0.1}
 
 XGradientBoosting: {'n_estimators': 50, 'max_depth': 3, 'learning_rate': 0.1}
 
+<img src-"./images/r_grid_prec.png">
+
+|Model|Precision|Accuracy|Returns|TP|TN|FP | FN|
+|-----|---------|--------|-------|--|--|---|---|
+|Logistic Regression|0.93 | 0.43 | 6.6%| 39330 | 28039 | 2965| 86673|
+|Random Forest| 0.95 | 0.31 | 5.3% | 18744 | 29955 | 1049 | 107259|
+|Gradient Boosting| 0.97 | 0.23 | 5.1%| 4934 | 30871 | 121069 | 121|
+|XGradient Boosting| 0.94 | 0.35| 5.2% | 26360 | 29270 | 1734 | 99643 | 
+
+Logistic Regression: {'penalty': 'l2', 'C': 1}
+
+Random Forest: {'n_estimators': 20, 'min_samples_split': 7, 'min_samples_leaf': 10, 'max_features': 'auto', 'max_depth': 3}
+
+Gradient Boosting
+Best Params: {'n_estimators': 50, 'max_depth': 6, 'learning_rate': 0.01}
+
+XGradientBoosting: {'n_estimators': 10, 'max_depth': 3, 'learning_rate': 0.01}
+
 
