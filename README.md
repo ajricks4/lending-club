@@ -203,7 +203,8 @@ Results:
 Results:
 -  max_depth: 10 
 -  max_features: sqrt 
--  
+-  min_samples_leaf: 15
+-  n_estimators: 
 
 #### GradientBoostingClassifier
 
