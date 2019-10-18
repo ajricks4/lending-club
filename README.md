@@ -191,12 +191,12 @@ Also from the charts, it appears that having a greated proportion of charged-off
 
 <img src="./images/Default_Models.png"/>
 
-|Model|Precision|Accuracy|Returns|
-|-----|---------|--------|-------|
-|Logistic Regression|
-|Random Forest|
-|Gradient Boosting|
-|XGradient Boosting|
+|Model|Precision|Accuracy|Returns|TP|TN|FP | FN|
+|-----|---------|--------|-------|--|--|---|---|
+|Logistic Regression|0.93 | 0.43 | 6.6%| 39330 | 28039 | 2965| 86673|
+|Random Forest| 0.91 | 0.41 | 6.7% | 37564 | 27432 | 3572 | 88439|
+|Gradient Boosting| 0.93 | 0.43 | 6.4%| 39455 | 28199 | 2805 | 86548|
+|XGradient Boosting| 0.93 | 0.43| 6.5% | 39241 | 28216 | 2788 | 86762 | 
 
 
 #### Tuning Hyperparameters
