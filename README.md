@@ -191,6 +191,13 @@ Also from the charts, it appears that having a greated proportion of charged-off
 
 <img src="./images/Default_Models.png"/>
 
+|Model|Precision|Accuracy|Returns|
+|-----|---------|--------|-------|
+|Logistic Regression|
+|Random Forest|
+|Gradient Boosting|
+|XGradient Boosting|
+
 #### Logistic Regression
 
 Results:
