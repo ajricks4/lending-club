@@ -187,7 +187,21 @@ Also from the charts, it appears that having a greated proportion of charged-off
 
 ## Model Evaluation
 
-#### Logistic Regression
+#### Default Models
+
+<img src="./images/Default_Models.png"/>
+
+|Model|Precision|Accuracy|Returns|
+|-----|---------|--------|-------|
+|Logistic Regression|
+|Random Forest|
+|Gradient Boosting|
+|XGradient Boosting|
+
+
+#### Tuning Hyperparameters
+
+Logistic Regression
 
 Results:
 -  Best Parameters:
@@ -198,7 +212,7 @@ Results:
 -  Accuracy: 42.9%
 -  Returns: 6.6%
 
-#### RandomForestClassifier
+RandomForestClassifier
 
 Results:
 -  Best Parameters
@@ -210,11 +224,11 @@ Results:
 -  Accuracy: 39.9%
 -  Return 6.0%
 
-#### GradientBoostingClassifier
+GradientBoostingClassifier
 
 Results:
 
-#### XGradientBoostingClassifier
+XGradientBoostingClassifier
 
 Hyperparameters:
 -  
@@ -222,5 +236,5 @@ Hyperparameters:
 
 Results:
 
-#### Neural Net
+Neural Net
 
