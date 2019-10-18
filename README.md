@@ -201,40 +201,21 @@ Also from the charts, it appears that having a greated proportion of charged-off
 
 #### Tuning Hyperparameters
 
-Logistic Regression
+<img src="./images/r_grid_acc.png">
 
-Results:
--  Best Parameters:
-  -  C: 8
-  -  solver: liblinear
-  -  penalty: l2
--  Precision: 93.0%
--  Accuracy: 42.9%
--  Returns: 6.6%
+|Model|Precision|Accuracy|Returns|TP|TN|FP | FN|
+|-----|---------|--------|-------|--|--|---|---|
+|Logistic Regression|0.93 | 0.43 | 6.6%| 39335 | 28039 | 2965| 86668|
+|Random Forest| 0.93 | 0.42 | 6.5% | 38139 | 28262 | 2742 | 87864|
+|Gradient Boosting| 0.93 | 0.44 | 6.8%| 40830 | 28076 | 2928 | 85173|
+|XGradient Boosting| 0.94 | 0.41| 6.0% | 35530 | 28534 | 2470 | 90473 | 
 
-RandomForestClassifier
+Logistic Regression: {'penalty': 'l1', 'C': 7}
 
-Results:
--  Best Parameters
-  -  max_depth: 10 
-  -  max_features: sqrt 
-  -  min_samples_leaf: 15
-  -  n_estimators: 115
--  Precision: 93.5%
--  Accuracy: 39.9%
--  Return 6.0%
+Random Forest: {'n_estimators': 20, 'min_samples_split': 5, 'min_samples_leaf': 10, 'max_features': 'sqrt', 'max_depth': 15}
 
-GradientBoostingClassifier
+Gradient Boosting: {'n_estimators': 50, 'max_depth': 6, 'learning_rate': 0.1}
 
-Results:
+XGradientBoosting: {'n_estimators': 50, 'max_depth': 3, 'learning_rate': 0.1}
 
-XGradientBoostingClassifier
-
-Hyperparameters:
--  
--  
-
-Results:
-
-Neural Net
 
