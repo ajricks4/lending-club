@@ -189,12 +189,6 @@ Also from the charts, it appears that having a greated proportion of charged-off
 
 #### Logistic Regression
 
-Hyperparameters:
--  C: [1,2,3,4,5,6,7,8,9]
--  solver: liblinear
--  penalty: [l1,l2]
--  cv: 3
-
 Results:
 -  Best Parameters:
   -  C: 8
@@ -206,17 +200,17 @@ Results:
 
 #### RandomForestClassifier
 
-Hyperparameters:
--  
--  
-
 Results:
+-  Best Parameters
+  -  max_depth: 10 
+  -  max_features: sqrt 
+  -  min_samples_leaf: 15
+  -  n_estimators: 115
+-  Precision: 93.5%
+-  Accuracy: 39.9%
+-  Return 6.0%
 
 #### GradientBoostingClassifier
-
-Hyperparameters:
--  
--  
 
 Results:
 
