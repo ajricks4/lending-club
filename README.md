@@ -237,3 +237,10 @@ Best Params: {'n_estimators': 50, 'max_depth': 6, 'learning_rate': 0.01}
 XGradientBoosting: {'n_estimators': 10, 'max_depth': 3, 'learning_rate': 0.01}
 
 
+Now we can see how our models change using a randomized grid search and we find that actually the models that are tuned using a scoring = accuracy metric are outperforming the models tuned to scoring = precision. This is interesting because it means that we have actually achieved high returns by balancing our training data in a way that maximizes precision and then training models to maximize accuracy. Below we can see how the models tuned for accuracy perform under different probability thresholds:
+
+<img src = ".images/returns_and_thresholds.png">
+
+So we can see that a tuned Gradient Boosting Classifer consistently performs the best across all thresholds. In particular, we find that setting the threshold in the range [0.35,0.45] yields a return of ~ 6.9%
+
+
