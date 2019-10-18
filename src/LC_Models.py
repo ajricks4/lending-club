@@ -13,7 +13,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from xgboost import XGBRFClassifier,XGBClassifier
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.model_selection import StratifiedShuffleSplit, GridSearchCV, train_test_split
+from sklearn.model_selection import StratifiedShuffleSplit, GridSearchCV, train_test_split,RandomizedSearchCV
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve, accuracy_score,precision_score
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
@@ -126,3 +126,48 @@ def lc_defaults_quick_eval(X_train,y_train,X_test,y_test,test_loan_data):
     gbc_stats = [round(gbc_acc,2),round(gbc_prec,2),round(gbc_ret/100+1,3)]
     xgb_stats = [round(xgb_acc,2),round(xgb_prec,2),round(xgb_ret/100+1,3)]
     return logm_stats, rfc_stats, gbc_stats, xgb_stats
+
+def lc_defaults_quick_eval(X_train,y_train,X_test,y_test,test_loan_data):
+    logm = LogisticRegression(solver='liblinear')
+    rfc = RandomForestClassifier(n_estimators=10)
+    gbc = GradientBoostingClassifier()
+    xgb = XGBClassifier()
+    logm.fit(X_train,y_train)
+    rfc.fit(X_train,y_train)
+    gbc.fit(X_train,y_train)
+    xgb.fit(X_train,y_train)
+    y_preds_logm = logm.predict(X_test)
+    y_preds_rfc = rfc.predict(X_test)
+    y_preds_gbc = gbc.predict(X_test)
+    y_preds_xgb = xgb.predict(X_test)
+    print('Logistic Regression')
+    logm_acc, logm_prec, logm_ret = lc_score(y_test,y_preds_logm,test_loan_data)
+    print('\n')
+    print('Random Forest')
+    rfc_acc, rfc_prec, rfc_ret = lc_score(y_test,y_preds_rfc,test_loan_data)
+    print('\n')
+    print('Gradient Boosting')
+    gbc_acc, gbc_prec, gbc_ret = lc_score(y_test,y_preds_gbc,test_loan_data)
+    print('\n')
+    print('XGradient Boosting')
+    xgb_acc, xgb_prec, xgb_ret = lc_score(y_test,y_preds_xgb,test_loan_data)
+    logm_stats = [round(logm_acc,2),round(logm_prec,2),round(logm_ret/100 + 1,3)]
+    rfc_stats = [round(rfc_acc,2),round(rfc_prec,2),round(rfc_ret/100+1,3)]
+    gbc_stats = [round(gbc_acc,2),round(gbc_prec,2),round(gbc_ret/100+1,3)]
+    xgb_stats = [round(xgb_acc,2),round(xgb_prec,2),round(xgb_ret/100+1,3)]
+    return logm_stats, rfc_stats, gbc_stats, xgb_stats
+
+
+def lc_randomized_search(X_train,y_train,y_test,test_loan_data):
+    logm = LogisticRegression(solver='liblinear')
+    rfc = RandomForestClassifier(n_estimators=10)
+    gbc = GradientBoostingClassifier()
+    xgb = XGBClassifier()
+    logm_params = {}
+    rfc_params = {}
+    gbc_params = {}
+    xgb_params = {}
+    logm_random = RandomizedSearchCV(logm,logm_params,cv=3,n_iter=10)
+    rfc_random = RandomizedSearchCV(rfc,rfc_params,cv=3,n_iter=10)
+    gbc_random = RandomizedSearchCV(gbc,gbc_params,cv=3,n_iter=10)
+    xgb_random = RandomizedSearchCV(xgb,xgb_params,cv=3,n_iter=10)
