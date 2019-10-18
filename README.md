@@ -198,7 +198,10 @@ Also from the charts, it appears that having a greated proportion of charged-off
 |Gradient Boosting|
 |XGradient Boosting|
 
-#### Logistic Regression
+
+#### Tuning Hyperparameters
+
+Logistic Regression
 
 Results:
 -  Best Parameters:
@@ -209,7 +212,7 @@ Results:
 -  Accuracy: 42.9%
 -  Returns: 6.6%
 
-#### RandomForestClassifier
+RandomForestClassifier
 
 Results:
 -  Best Parameters
@@ -221,11 +224,11 @@ Results:
 -  Accuracy: 39.9%
 -  Return 6.0%
 
-#### GradientBoostingClassifier
+GradientBoostingClassifier
 
 Results:
 
-#### XGradientBoostingClassifier
+XGradientBoostingClassifier
 
 Hyperparameters:
 -  
@@ -233,5 +236,5 @@ Hyperparameters:
 
 Results:
 
-#### Neural Net
+Neural Net
 
