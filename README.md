@@ -218,7 +218,7 @@ Gradient Boosting: {'n_estimators': 50, 'max_depth': 6, 'learning_rate': 0.1}
 
 XGradientBoosting: {'n_estimators': 50, 'max_depth': 3, 'learning_rate': 0.1}
 
-<img src-"./images/r_grid_prec.png">
+<img src="./images/r_grid_prec.png">
 
 |Model|Precision|Accuracy|Returns|TP|TN|FP | FN|
 |-----|---------|--------|-------|--|--|---|---|
