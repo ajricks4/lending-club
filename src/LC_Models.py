@@ -158,7 +158,7 @@ def lc_defaults_quick_eval(X_train,y_train,X_test,y_test,test_loan_data):
     return logm_stats, rfc_stats, gbc_stats, xgb_stats
 
 
-def lc_randomized_search(X_train,y_train,X_test, y_test,test_loan_data):
+def lc_randomized_search(X_train,y_train,X_test, y_test,test_loan_data,scoring):
     logm = LogisticRegression(solver='liblinear')
     rfc = RandomForestClassifier(n_estimators=10)
     gbc = GradientBoostingClassifier()
@@ -171,13 +171,13 @@ def lc_randomized_search(X_train,y_train,X_test, y_test,test_loan_data):
      'n_estimators': [10,20,100]}
     gbc_params = {'n_estimators':[10,50],'learning_rate':[0.1,0.01],'max_depth':[3,6]}
     xgb_params = {'n_estimators':[10,50],'learning_rate':[0.1,0.01],'max_depth':[3,6]}
-    logm_random = RandomizedSearchCV(logm,logm_params,cv=3,n_iter=5,n_jobs=-1)
+    logm_random = RandomizedSearchCV(logm,logm_params,cv=3,n_iter=5,n_jobs=-1,scoring=scoring)
 
-    rfc_random = RandomizedSearchCV(rfc,rfc_params,cv=3,n_iter=5,n_jobs=-1)
+    rfc_random = RandomizedSearchCV(rfc,rfc_params,cv=3,n_iter=5,n_jobs=-1,scoring=scoring)
 
-    gbc_random = RandomizedSearchCV(gbc,gbc_params,cv=3,n_iter=5,n_jobs=-1)
+    gbc_random = RandomizedSearchCV(gbc,gbc_params,cv=3,n_iter=5,n_jobs=-1,scoring=scoring)
 
-    xgb_random = RandomizedSearchCV(xgb,xgb_params,cv=3,n_iter=5,n_jobs=-1)
+    xgb_random = RandomizedSearchCV(xgb,xgb_params,cv=3,n_iter=5,n_jobs=-1,scoring=scoring)
 
     logm_random.fit(X_train,y_train)
     print('Completed fit for Logistic Regression')
@@ -210,5 +210,13 @@ def lc_randomized_search(X_train,y_train,X_test, y_test,test_loan_data):
 
 
 
-def lc_predict_probas_evaluator(model, y_test,loan_test_data):
-    pass
+def lc_predict_probas_evaluator(model, X_test, y_test,loan_test_data):
+    probs_class_1 = list(model.predict_proba(X_test)[:,1])
+    predictions = pd.DataFrame({'Class1':probs_class_1,'y_true':y_test})
+    evals = pd.concat([loan_test_data,predictions],axis=1)
+    rets = []
+    for i in list(np.linspace(0.1,0.7,100)):
+        evals['threshold_'+str(i)] = evals['Class1'].apply(lambda x: 1 if x > i else 0)
+        ret = (np.sum(evals['threshold_'+str(i)] * evals['loan_payoff']) / np.sum((evals['loan_amount'] * evals['threshold_'+str(i)])) - 1)
+        rets.append(round(ret,3))
+    return list(np.linspace(0.1,0.7,100)),rets

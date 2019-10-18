@@ -489,8 +489,15 @@ def lc_defaults_iplot(X_train,y_train,X_test,y_test,test_loan_data):
 
 
 
-def lc_ml(logm_stats,rfc_stats, gbc_stats,xgb_stats):
-
+def lc_ml(logm,rfc, gbc,xgb,filename,title):
+    logm_stats = list(logm).copy()
+    logm_stats[-1] = round((logm_stats[-1] / 100) + 1,3)
+    rfc_stats = list(rfc).copy()
+    rfc_stats[-1] = round((rfc_stats[-1] / 100) + 1,3)
+    gbc_stats = list(gbc).copy()
+    gbc_stats[-1] = round((gbc_stats[-1] / 100) + 1,3)
+    xgb_stats = list(xgb).copy()
+    xgb_stats[-1] = round((xgb_stats[-1] / 100) + 1,3)
     data = [
     go.Scatterpolar(
         mode='lines+markers',
@@ -639,6 +646,28 @@ def lc_ml(logm_stats,rfc_stats, gbc_stats,xgb_stats):
     )
 
     fig = go.Figure(data=data, layout=layout)
-    fig.update_layout(title_text='Randomized Grid Search Best Params')
+    fig.update_layout(title_text=title)
     plotly.offline.plot(fig,filename='random_ml_models',auto_open=False)
-    iplot(fig,image_width=1000,image_height=1000,filename='random_ml_models',image='png')
+    iplot(fig,image_width=1000,image_height=1000,filename=filename,image='png')
+
+
+
+def lc_returns_vs_thresholds(models, X_test, y_test,loan_test_data):
+    ret_list = []
+    for model in models:
+        x, rets = LCM.lc_predict_probas_evaluator(model, X_test, y_test,loan_test_data)
+        ret_list.append(rets)
+    fig = plt.figure(figsize=(20,20))
+    ax = fig.add_subplot(1,1,1)
+    ax.plot(x,ret_list[0],label='Logistic Regression')
+    ax.plot(x,ret_list[1],label='Random Forest')
+    ax.plot(x,ret_list[2],label='Gradient Boosting')
+    ax.plot(x,ret_list[3],label='XGradient Boosting')
+    plt.title('Returns vs. Threshold',fontsize=20,fontweight='bold')
+    plt.xlabel('Thresholds',fontsize=20)
+    plt.ylabel('Returns',fontsize=20)
+    ax.tick_params('x',labelsize=20)
+    ax.tick_params('y',labelsize=20)
+    plt.savefig('images/returns_and_thresholds')
+    plt.legend(loc='lower right',prop={'size': 100})
+    plt.show()
