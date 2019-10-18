@@ -669,5 +669,5 @@ def lc_returns_vs_thresholds(models, X_test, y_test,loan_test_data):
     ax.tick_params('x',labelsize=20)
     ax.tick_params('y',labelsize=20)
     plt.savefig('images/returns_and_thresholds')
-    plt.legend(loc='lower right',prop={'size': 100})
+    plt.legend(loc='lower right',prop={'size': 25})
     plt.show()
