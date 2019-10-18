@@ -187,6 +187,10 @@ Also from the charts, it appears that having a greated proportion of charged-off
 
 ## Model Evaluation
 
+#### Default Models
+
+<img src="./images/Default_Models.png"/>
+
 #### Logistic Regression
 
 Results:
