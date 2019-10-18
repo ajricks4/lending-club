@@ -201,10 +201,14 @@ Results:
 #### RandomForestClassifier
 
 Results:
--  max_depth: 10 
--  max_features: sqrt 
--  min_samples_leaf: 15
--  n_estimators: 
+-  Best Parameters
+  -  max_depth: 10 
+  -  max_features: sqrt 
+  -  min_samples_leaf: 15
+  -  n_estimators: 115
+-  Precision: 93.5%
+-  Accuracy: 39.9%
+-  Return 6.0%
 
 #### GradientBoostingClassifier
 
