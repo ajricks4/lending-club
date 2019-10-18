@@ -158,16 +158,57 @@ def lc_defaults_quick_eval(X_train,y_train,X_test,y_test,test_loan_data):
     return logm_stats, rfc_stats, gbc_stats, xgb_stats
 
 
-def lc_randomized_search(X_train,y_train,y_test,test_loan_data):
+def lc_randomized_search(X_train,y_train,X_test, y_test,test_loan_data):
     logm = LogisticRegression(solver='liblinear')
     rfc = RandomForestClassifier(n_estimators=10)
     gbc = GradientBoostingClassifier()
     xgb = XGBClassifier()
-    logm_params = {}
-    rfc_params = {}
-    gbc_params = {}
-    xgb_params = {}
-    logm_random = RandomizedSearchCV(logm,logm_params,cv=3,n_iter=10)
-    rfc_random = RandomizedSearchCV(rfc,rfc_params,cv=3,n_iter=10)
-    gbc_random = RandomizedSearchCV(gbc,gbc_params,cv=3,n_iter=10)
-    xgb_random = RandomizedSearchCV(xgb,xgb_params,cv=3,n_iter=10)
+    logm_params = {'penalty':['l1','l2'],'C':np.arange(1,10,1)}
+    rfc_params = { 'max_depth': [3,5,10,15,20],
+     'max_features': ['auto', 'sqrt'],
+     'min_samples_leaf': [1, 2, 4,6,10],
+     'min_samples_split': [2, 5, 7,10],
+     'n_estimators': [10,20,100]}
+    gbc_params = {'n_estimators':[10,50],'learning_rate':[0.1,0.01],'max_depth':[3,6]}
+    xgb_params = {'n_estimators':[10,50],'learning_rate':[0.1,0.01],'max_depth':[3,6]}
+    logm_random = RandomizedSearchCV(logm,logm_params,cv=3,n_iter=5,n_jobs=-1)
+
+    rfc_random = RandomizedSearchCV(rfc,rfc_params,cv=3,n_iter=5,n_jobs=-1)
+
+    gbc_random = RandomizedSearchCV(gbc,gbc_params,cv=3,n_iter=5,n_jobs=-1)
+
+    xgb_random = RandomizedSearchCV(xgb,xgb_params,cv=3,n_iter=5,n_jobs=-1)
+
+    logm_random.fit(X_train,y_train)
+    print('Completed fit for Logistic Regression')
+    rfc_random.fit(X_train,y_train)
+    print('Completed fit for Random Forest')
+    gbc_random.fit(X_train,y_train)
+    print('Completed fit for Gradient Boosting')
+    xgb_random.fit(X_train,y_train)
+    print('Completed fit for XGradient Boosting')
+    logm_y_preds = logm_random.predict(X_test)
+    rfc_y_preds = rfc_random.predict(X_test)
+    gbc_y_preds = gbc_random.predict(X_test)
+    xgb_y_preds = xgb_random.predict(X_test)
+    print('Logistic Regression')
+    print('Best_Params: {}'.format(logm_random.best_params_))
+    logm_stats = lc_score(y_test,logm_y_preds,test_loan_data)
+    print('\n')
+    print('Random Forest')
+    print('Best Params: {}'.format(rfc_random.best_params_))
+    rfc_stats = lc_score(y_test,rfc_y_preds,test_loan_data)
+    print('\n')
+    print('Gradient Boosting')
+    print('Best Params: {}'.format(gbc_random.best_params_))
+    gbc_stats = lc_score(y_test,gbc_y_preds,test_loan_data)
+    print('\n')
+    print('XGradientBoosting')
+    print('Best Params: {}'.format(xgb_random.best_params_))
+    xgb_stats = lc_score(y_test,xgb_y_preds,test_loan_data)
+    return logm_stats, rfc_stats, gbc_stats, xgb_stats, logm_random, rfc_random, gbc_random, xgb_random
+
+
+
+def lc_predict_probas_evaluator(model, y_test,loan_test_data):
+    pass

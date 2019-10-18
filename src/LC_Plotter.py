@@ -484,3 +484,161 @@ def lc_defaults_iplot(X_train,y_train,X_test,y_test,test_loan_data):
     fig.update_layout(title_text='Default Sklearn Model Performance')
     plotly.offline.plot(fig,filename='default_ml_models',auto_open=False)
     iplot(fig,image_width=1000,image_height=1000,filename='default_ml_models',image='png')
+
+
+
+
+
+def lc_ml(logm_stats,rfc_stats, gbc_stats,xgb_stats):
+
+    data = [
+    go.Scatterpolar(
+        mode='lines+markers',
+      r = xgb_stats,
+      theta = ['XGB Acc.','XGB Prec.','XGB Ret.'],
+      fill = 'toself',
+      name = '',
+        line = dict(
+        color = "#63AF63"
+      ),
+      marker = dict(
+        color = "#B3FFB3",
+        symbol = "square",
+        size = 12
+      ),
+      subplot = "polar",
+    ),
+        go.Scatterpolar(
+        mode='lines+markers',
+      r = logm_stats,
+      theta = ['LogReg Acc.','LogReg Prec.','LogReg Ret.'],
+      fill = 'toself',
+      name = '',
+        line = dict(
+        color = "#63AF63"
+      ),
+      marker = dict(
+        color = "#B3FFB3",
+        symbol = "square",
+        size = 12
+      ),
+      subplot = "polar3",
+    ),
+        go.Scatterpolar(
+        mode='lines+markers',
+      r = rfc_stats,
+      theta = ['RFC Acc.','RFC Prec.','RFC Ret.'],
+      fill = 'toself',
+      name = '',
+        line = dict(
+        color = "#63AF63"
+      ),
+      marker = dict(
+        color = "#B3FFB3",
+        symbol = "square",
+        size = 12
+      ),
+      subplot = "polar2",
+    ),
+    go.Scatterpolar(
+        mode='lines+markers',
+      r = gbc_stats,
+      theta = ['GBC Acc.','GBC Prec.','GBC Ret.'],
+      fill = 'toself',
+      name = '',
+        line = dict(
+        color = "#63AF63"
+      ),
+      marker = dict(
+        color = "#B3FFB3",
+        symbol = "square",
+        size = 12
+      ),
+      subplot = "polar4",
+    )
+    ]
+
+    layout = go.Layout(
+        title="",
+        showlegend = False,
+         paper_bgcolor = "rgb(255, 248, 243)",
+        polar = dict(
+          domain = dict(
+            x = [0.6,1.0],
+            y = [0.0,0.4]
+          ),
+          radialaxis = dict(
+            tickfont = dict(
+              size = 8
+            )
+          ),
+          angularaxis = dict(
+            tickfont = dict(
+              size = 12
+            ),
+            rotation = 90,
+            direction = "counterclockwise"
+          )
+        ),
+        polar2 = dict(
+          domain = dict(
+            x = [0.6,1],
+            y = [0.6,1]
+          ),
+          radialaxis = dict(
+            tickfont = dict(
+              size = 8
+            )
+          ),
+          angularaxis = dict(
+            tickfont = dict(
+              size = 12
+            ),
+            rotation = 90,
+            direction = "counterclockwise"
+          ),
+        ),
+        polar3 = dict(
+          domain = dict(
+            x = [0.0,0.4],
+            y = [0.6,1.0]
+          ),
+          radialaxis = dict(
+            tickfont = dict(
+              size = 8
+            )
+          ),
+          angularaxis = dict(
+            tickfont = dict(
+              size = 12
+            ),
+            rotation = 90,
+            direction = "counterclockwise"
+          )
+        ),
+        polar4 = dict(
+          domain = dict(
+            x = [0.0,0.4],
+            y = [0.0,0.4]
+          ),
+          radialaxis = dict(
+            tickfont = dict(
+              size = 8
+
+            )
+          ),
+          angularaxis = dict(
+            tickfont = dict(
+              size = 12
+            ),
+            rotation = 90,
+            direction = "counterclockwise"
+          )
+        )
+
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+    fig.update_layout(title_text='Randomized Grid Search Best Params')
+    plotly.offline.plot(fig,filename='random_ml_models',auto_open=False)
+    iplot(fig,image_width=1000,image_height=1000,filename='random_ml_models',image='png')
