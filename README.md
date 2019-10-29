@@ -67,6 +67,9 @@ Speficially, we can see that Lending Club does a good job rating its loans, with
 To get a sense of how Lending Club's loans are dispersed throughout the U.S., we can view the two below plots:
 (Please note that the plots below are .png file representations of an interactive .html file. The html files are saved in the images repository and can be re-created using code found in the src repository)
 
+![Lending Club Map]state_choro_loan_total.html
+
+
 <img src="./images/state_loan_originations.png"/>
 <img src="./images/state_loan_count.png"/>
 
