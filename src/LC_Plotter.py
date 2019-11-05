@@ -28,15 +28,15 @@ def plot_loan_breakdown_pie(df):
     pie_df = df.groupby('loan_status').sum()[['loan_amnt']]
     pie_df.reset_index(inplace=True)
     bad_loan_sum = pie_df.sort_values(by='loan_amnt').head(4)['loan_amnt'].sum()
-    pie_df.loc[pie_df.shape[0]+1] = ['Late, In Default / Grace Period',bad_loan_sum]
-    pie_df = pie_df[(pie_df['loan_status']=='Charged Off') | (pie_df['loan_status'] == 'Current') | (pie_df['loan_status'] == 'Fully Paid') | (pie_df['loan_status'] == 'Charged Off') | (pie_df['loan_status'] == 'Late, In Default / Grace Period')]
+    pie_df.loc[pie_df.shape[0]+1] = ['Troubled Debt',bad_loan_sum]
+    pie_df = pie_df[(pie_df['loan_status']=='Charged Off') | (pie_df['loan_status'] == 'Current') | (pie_df['loan_status'] == 'Fully Paid') | (pie_df['loan_status'] == 'Charged Off') | (pie_df['loan_status'] == 'Troubled Debt')]
     fig = plt.figure(figsize=(30,30))
     ax = fig.add_subplot(1,1,1)
     cmap = plt.get_cmap("tab20")
     colors = cmap(np.array([0,2,4,8]))
     explode = [0.1 for i in range(pie_df.shape[0])]
-    ax.pie(pie_df['loan_amnt'],autopct=apc,labels=pie_df['loan_status'],explode=explode,textprops={'size':45},colors=colors)
-    plt.title('Lending Club Loan Status Across ${}B Loans'.format(round(pie_df['loan_amnt'].sum()/1000000000,1)),fontsize = 45,fontweight='bold')
+    ax.pie(pie_df['loan_amnt'],autopct=apc,labels=pie_df['loan_status'],explode=explode,textprops={'size':60,'weight':'bold'},colors=colors)
+    plt.title('Lending Club Loan Status Across ${}B Loans'.format(round(pie_df['loan_amnt'].sum()/1000000000,1)),fontsize = 70,fontweight='bold')
     plt.savefig('images/lc_loan_status.png')
     plt.show()
 
@@ -60,7 +60,7 @@ def plot_grade_breakdown_pie(df):
     for i in range(grade_pie.shape[0]):
         for j in range(2,grade_pie.shape[1]):
             amounts.append(grade_pie.iloc[i,j])
-    labels = ['Paid-Off','Outs','Bad Debt']* 4
+    labels = ['Paid','Outs','Bad']* 4
     labels += ['','',''] * 3
     fig = plt.figure(figsize= (25,25))
 
@@ -72,12 +72,12 @@ def plot_grade_breakdown_pie(df):
     inner_colors = cmap(np.array([1,2,3,5,6,7,9,10,11,13,14,15,5,6,7,9,10,11,13,14,15]))
 
     ax.pie(grade_pie['loan_amnt'], radius=1, colors=outer_colors,
-       wedgeprops=dict(width=size, edgecolor='w'),startangle=90,labels=grade_pie['grade'],textprops={'size':30,'color':'blue'},autopct = apc,pctdistance=0.9)
+       wedgeprops=dict(width=size, edgecolor='w'),startangle=90,labels=grade_pie['grade'],textprops={'size':40,'color':'blue','weight':'bold'},autopct = apc,pctdistance=0.9)
 
     ax.pie(amounts, radius=1-size, colors=inner_colors,
-       wedgeprops=dict(width=0.35, edgecolor='w'),startangle=90,labels=labels,textprops={'size':30,'color':'black'},autopct = apc,pctdistance = 0.575,labeldistance=0.8)
+       wedgeprops=dict(width=0.35, edgecolor='w'),startangle=90,labels=labels,textprops={'size':40,'color':'black','weight':'bold'},autopct = apc,pctdistance = 0.60,labeldistance=0.835)
 
-    plt.title('Lending Club Loans By Grade and Status',fontsize = 35,fontweight='bold')
+    plt.title('Lending Club Loans By Grade and Status',fontsize = 45,fontweight='bold')
     plt.tight_layout()
     plt.savefig('images/lc_grade_pie.png')
     plt.show()
@@ -213,34 +213,35 @@ def lc_individual_profile(df_original):
     """
     df = df_original.copy()
     df['loan_outcome'] = df['loan_status'].apply(lambda x: 1 if (x=='Current') or (x=='Fully Paid') else 0)
-    fig = plt.figure(figsize=(20,20))
+    fig = plt.figure(figsize=(40,40))
     ax1 = fig.add_subplot(2,2,1)
     ax1 = sns.violinplot(df['loan_amnt'])
-    plt.xlabel('Loan Amount',fontsize=20)
-    plt.ylabel('Distribution',fontsize=20)
-    plt.title('Loan Amount',fontsize=25,fontweight='bold')
-    ax1.tick_params('x',labelsize=15)
-    ax1.tick_params('y',labelsize=15)
+    plt.xlabel('Loan Amount',fontsize=50)
+    plt.ylabel('Distribution',fontsize=50)
+    plt.title('Loan Amount',fontsize=50,fontweight='bold')
+    ax1.tick_params('x',labelsize=50)
+    ax1.tick_params('y',labelsize=50)
     ax2 = fig.add_subplot(2,2,2)
     ax2 = sns.distplot(df[df['fico_range_low'].isnull() == False]['fico_range_low'])
-    ax2.tick_params('x',labelsize=15)
-    ax2.tick_params('y',labelsize=15)
-    plt.xlabel('Fico Score',fontsize=20)
-    plt.ylabel('Frequency',fontsize=20)
-    plt.title('Distribution of Fico Range Low',fontsize=20,fontweight='bold')
+    ax2.tick_params('x',labelsize=50)
+    ax2.tick_params('y',labelsize=50)
+    plt.xlabel('Fico Score',fontsize=50)
+    plt.ylabel('Frequency',fontsize=50)
+    plt.title('Distribution of Fico Range Low',fontsize=50,fontweight='bold')
     ax3 = fig.add_subplot(2,2,3)
     ax3 = sns.distplot(df['emp_length'])
-    ax3.tick_params('x',labelsize=15)
-    ax3.tick_params('y',labelsize=15)
-    plt.xlabel('Years Working at Current Job',fontsize=20)
-    plt.title('Employment Length',fontsize=25,fontweight='bold')
+    ax3.tick_params('x',labelsize=50)
+    ax3.tick_params('y',labelsize=50)
+    plt.xlabel('Years Working at Current Job',fontsize=50)
+    plt.title('Employment Length',fontsize=50,fontweight='bold')
     ax4 = fig.add_subplot(2,2,4)
     labels = list(df['home_ownership'].value_counts().index[:-3]) + ['','','']
     explode = [0.1 for i in range(len(labels))]
-    ax4.pie(df['home_ownership'].value_counts(),labels = labels,autopct=apc,textprops={'size':20,'color':'black'},explode=explode)
-    plt.title('Living Location Status',fontsize=25,fontweight='bold')
+    ax4.pie(df['home_ownership'].value_counts(),labels = labels,autopct=apc,textprops={'size':50,'color':'black'},explode=explode)
+    plt.title('Living Location Status',fontsize=50,fontweight='bold')
 
     plt.savefig('images/borrower_profile.png')
+    plt.tight_layout()
     plt.show()
 
 
@@ -256,32 +257,32 @@ def lc_returns(df):
     grouped.drop(['funded_amnt','total_pymnt'],axis=1,inplace=True)
     return grouped
 
-def lc_plot_returns(returns):
+def lc_plot_returns(returns,title,filepath):
     fig = plt.figure(figsize=(30,30))
     ax1 = fig.add_subplot(1,1,1)
     ax1.bar(returns['grade'],returns['return'])
-    plt.title('Returns by Grade',fontsize=40,fontweight='bold')
+    plt.title(title,fontsize=40,fontweight='bold')
     plt.xlabel('Grade',fontdict={'size':40})
     plt.ylabel('Return',fontdict={'size':40})
     ax1.tick_params('x',labelsize=35)
     ax1.tick_params('y',labelsize=35)
-    plt.savefig('images/grade_returns.png')
+    plt.savefig(filepath)
     plt.show()
 
-def lc_plot_annualized_returns(returns):
+def lc_plot_annualized_returns(returns,title,filepath):
     fig = plt.figure(figsize=(30,30))
     ax2 = fig.add_subplot(1,1,1)
     ax2.bar(returns['grade'],returns['annualized_pct'])
-    plt.title('Annualized Returns by Grade',fontsize=40,fontweight='bold')
+    plt.title(title,fontsize=40,fontweight='bold')
     plt.xlabel('Grade',fontdict={'size':40})
     plt.ylabel('Annualized Return',fontdict={'size':40})
     ax2.tick_params('x',labelsize=35)
     ax2.tick_params('y',labelsize=35)
-    plt.savefig('images/grade_annualized_returns.png')
+    plt.savefig(filepath)
     plt.show()
 
 
-def lc_choose_proportion(df):
+def lc_choose_proportion(df,filepath):
     output_df = df.iloc[1:,:]
     fig = plt.figure(figsize=(20,20))
     ax1 = fig.add_subplot(3,2,1)
@@ -327,164 +328,39 @@ def lc_choose_proportion(df):
     plt.ylabel('Counts')
     plt.title('Distribution of Returns',fontsize=20,fontweight='bold')
     plt.tight_layout()
-    plt.savefig('images/proportion_eval.png')
+    plt.savefig(filepath)
 
 
 
 def lc_defaults_iplot(X_train,y_train,X_test,y_test,test_loan_data):
     logm_stats, rfc_stats, gbc_stats, xgb_stats = LCM.lc_defaults_quick_eval(X_train,y_train,X_test,y_test,test_loan_data)
-    data = [
-    go.Scatterpolar(
-        mode='lines+markers',
-      r = xgb_stats,
-      theta = ['XGB Acc.','XGB Prec.','XGB Ret.'],
-      fill = 'toself',
-      name = '',
-        line = dict(
-        color = "#63AF63"
-      ),
-      marker = dict(
-        color = "#B3FFB3",
-        symbol = "square",
-        size = 12
-      ),
-      subplot = "polar",
-    ),
-        go.Scatterpolar(
-        mode='lines+markers',
-      r = logm_stats,
-      theta = ['LogReg Acc.','LogReg Prec.','LogReg Ret.'],
-      fill = 'toself',
-      name = '',
-        line = dict(
-        color = "#63AF63"
-      ),
-      marker = dict(
-        color = "#B3FFB3",
-        symbol = "square",
-        size = 12
-      ),
-      subplot = "polar3",
-    ),
-        go.Scatterpolar(
-        mode='lines+markers',
-      r = rfc_stats,
-      theta = ['RFC Acc.','RFC Prec.','RFC Ret.'],
-      fill = 'toself',
-      name = '',
-        line = dict(
-        color = "#63AF63"
-      ),
-      marker = dict(
-        color = "#B3FFB3",
-        symbol = "square",
-        size = 12
-      ),
-      subplot = "polar2",
-    ),
-    go.Scatterpolar(
-        mode='lines+markers',
-      r = gbc_stats,
-      theta = ['GBC Acc.','GBC Prec.','GBC Ret.'],
-      fill = 'toself',
-      name = '',
-        line = dict(
-        color = "#63AF63"
-      ),
-      marker = dict(
-        color = "#B3FFB3",
-        symbol = "square",
-        size = 12
-      ),
-      subplot = "polar4",
-    )
-    ]
-
-    layout = go.Layout(
-        title="",
-        showlegend = False,
-         paper_bgcolor = "rgb(255, 248, 243)",
-        polar = dict(
-          domain = dict(
-            x = [0.6,1.0],
-            y = [0.0,0.4]
-          ),
-          radialaxis = dict(
-            tickfont = dict(
-              size = 8
-            )
-          ),
-          angularaxis = dict(
-            tickfont = dict(
-              size = 12
-            ),
-            rotation = 90,
-            direction = "counterclockwise"
-          )
-        ),
-        polar2 = dict(
-          domain = dict(
-            x = [0.6,1],
-            y = [0.6,1]
-          ),
-          radialaxis = dict(
-            tickfont = dict(
-              size = 8
-            )
-          ),
-          angularaxis = dict(
-            tickfont = dict(
-              size = 12
-            ),
-            rotation = 90,
-            direction = "counterclockwise"
-          ),
-        ),
-        polar3 = dict(
-          domain = dict(
-            x = [0.0,0.4],
-            y = [0.6,1.0]
-          ),
-          radialaxis = dict(
-            tickfont = dict(
-              size = 8
-            )
-          ),
-          angularaxis = dict(
-            tickfont = dict(
-              size = 12
-            ),
-            rotation = 90,
-            direction = "counterclockwise"
-          )
-        ),
-        polar4 = dict(
-          domain = dict(
-            x = [0.0,0.4],
-            y = [0.0,0.4]
-          ),
-          radialaxis = dict(
-            tickfont = dict(
-              size = 8
-
-            )
-          ),
-          angularaxis = dict(
-            tickfont = dict(
-              size = 12
-            ),
-            rotation = 90,
-            direction = "counterclockwise"
-          )
-        )
-
-    )
-
-    fig = go.Figure(data=data, layout=layout)
-    fig.update_layout(title_text='Default Sklearn Model Performance')
-    plotly.offline.plot(fig,filename='default_ml_models',auto_open=False)
-    iplot(fig,image_width=1000,image_height=1000,filename='default_ml_models',image='png')
-
+    acc = []
+    prec = []
+    rets = []
+    count = 0
+    for i,j,k,l in zip(logm_stats,rfc_stats,gbc_stats,xgb_stats):
+        if count ==0:
+            acc.append(i)
+            acc.append(j)
+            acc.append(k)
+            acc.append(l)
+        elif count == 1:
+            prec.append(i)
+            prec.append(j)
+            prec.append(k)
+            prec.append(l)
+        else:
+            rets.append(i)
+            rets.append(j)
+            rets.append(k)
+            rets.append(l)
+        count += 1
+    fig = plt.figure(figsize = (40,40))
+    ax = fig.add_subplot(1,1,1)
+    ax.bar(height=acc,width=0.2,color='green')
+    ax.bar(height=prec,width=0.2,color='blue')
+    ax.bar(height=rets, width=0.2,color='red')
+    plt.show()
 
 
 
@@ -652,7 +528,7 @@ def lc_ml(logm,rfc, gbc,xgb,filename,title):
 
 
 
-def lc_returns_vs_thresholds(models, X_test, y_test,loan_test_data):
+def lc_returns_vs_thresholds(models, X_test, y_test,loan_test_data,filepath):
     ret_list = []
     for model in models:
         x, rets = LCM.lc_predict_probas_evaluator(model, X_test, y_test,loan_test_data)
@@ -668,6 +544,29 @@ def lc_returns_vs_thresholds(models, X_test, y_test,loan_test_data):
     plt.ylabel('Returns',fontsize=20)
     ax.tick_params('x',labelsize=20)
     ax.tick_params('y',labelsize=20)
-    plt.savefig('images/returns_and_thresholds')
+    plt.savefig(filepath)
     plt.legend(loc='lower right',prop={'size': 25})
     plt.show()
+
+
+def lc_proportions_time(df):
+    cohort_df = (df.groupby(['issue_d_year','loan_status']).sum()['funded_amnt'] / 1000000).reset_index()
+    cohort_df['proportion'] = cohort_df.apply(lambda row: prop_cohort(row,cohort_df),axis=1)
+    fig = plt.figure(figsize=(10,5))
+    ax = fig.add_subplot(1,1,1)
+    ax.plot(cohort_df[cohort_df['loan_status'] ==1]['issue_d_year'],cohort_df[cohort_df['loan_status'] ==1]['proportion'],label='Fully Paid',c='blue')
+    ax.plot(cohort_df[cohort_df['loan_status'] ==0]['issue_d_year'],cohort_df[cohort_df['loan_status'] ==0]['proportion'],label='Charged-Off ',c='orangered')
+    plt.xlabel('Year',fontsize=15)
+    plt.ylabel('Proportion',fontsize=15)
+    plt.title('Loan Outcome Proportions')
+    ax.tick_params('x',labelsize=15)
+    ax.tick_params('y',labelsize=15)
+    plt.legend()
+    plt.savefig('images/loan_outcome_proportions.png')
+    plt.show()
+
+
+def prop_cohort(row,cohort_df):
+    yr = row['issue_d_year']
+    yr_amnt = cohort_df[cohort_df['issue_d_year'] == yr]['funded_amnt'].sum()
+    return row['funded_amnt'] / yr_amnt

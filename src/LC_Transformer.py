@@ -20,9 +20,9 @@ def lc_transform(df_original):
         categories += list(i)
     test_cat = pd.DataFrame(X2.todense(),columns=categories)
     test_num = pd.DataFrame(X1,columns=num_features)
-    output = df[['funded_amnt','total_pymnt','loan_status']]
+    output = df[['term','funded_amnt','total_pymnt','loan_status',]]
     output[['loan_amount','loan_payoff']] = output[['funded_amnt','total_pymnt']]
-    output = output[['loan_amount','loan_payoff','loan_status']]
+    output = output[['term','loan_amount','loan_payoff','loan_status']]
     scaled_df = pd.concat([test_num,test_cat,output],axis=1)
     return scaled_df
 
@@ -69,8 +69,8 @@ def lc_balance_sets(scaled_df,proportion = 1):
     train_set = pd.concat([class_0,class_1])
     X_train = train_set.iloc[:,:-1]
     y_train = train_set.iloc[:,-1]
-    train_loan_data = X_train[['loan_amount','loan_payoff']]
-    X_train.drop(['loan_amount','loan_payoff'],axis=1,inplace=True)
-    test_loan_data = X_test[['loan_amount','loan_payoff']]
-    X_test.drop(['loan_amount','loan_payoff'],axis=1,inplace=True)
+    train_loan_data = X_train[['term','loan_amount','loan_payoff']]
+    X_train.drop(['term','loan_amount','loan_payoff'],axis=1,inplace=True)
+    test_loan_data = X_test[['term','loan_amount','loan_payoff']]
+    X_test.drop(['term','loan_amount','loan_payoff'],axis=1,inplace=True)
     return X_train, X_test, y_train, y_test, train_loan_data, test_loan_data

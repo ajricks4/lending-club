@@ -35,10 +35,20 @@ from sklearn.feature_selection import SelectKBest
 def lc_evaluate_model(y_true,y_preds,df_extra):
     predictions = pd.DataFrame({'y_preds':y_preds,'y_true':y_true})
     evals = pd.concat([df_extra,predictions],axis=1)
-    evals['investments'] = evals['y_preds'] * evals['loan_amount']
-    evals['profit_loss'] = evals['y_preds'] * evals['loan_payoff']
+    evals['investments'] = round(evals['y_preds'] * evals['loan_amount'],3)
+    evals['profit_loss'] = round(evals['y_preds'] * evals['loan_payoff'],3)
+    evals = evals.groupby('term').sum()
     overall_return = round((evals['profit_loss'].sum() / evals['investments'].sum() - 1) * 100 ,1)
-    return overall_return
+    deployed_capital = evals['investments'].sum()
+    returned_capital = evals['profit_loss'].sum()
+    t_36_pl = evals.loc[36,'profit_loss']
+    t_36_deployed = evals.loc[36,'investments']
+    t_36_rets = round((t_36_pl / t_36_deployed - 1) * 100,2)
+    t_60_pl = evals.loc[60,'profit_loss']
+    t_60_deployed = evals.loc[60,'investments']
+    t_60_rets = round((t_60_pl / t_60_deployed - 1) * 100,2)
+
+    return overall_return, deployed_capital, returned_capital, t_36_rets,t_36_deployed,t_36_pl,t_60_rets,t_60_deployed,t_60_pl
 
 
 
@@ -49,7 +59,8 @@ def lc_mult_evaluate(scaled_df,model):
     precs= []
     rets = []
     props = []
-    for i in list(np.linspace(0.01, 3.0,25)):
+    for i in list(np.linspace(0.01, 1.5,15)):
+        print('\n')
         print('Testing with proportion {}'.format(i))
         print('\n')
         X_train, X_test, y_train, y_test, train_loan_data, test_loan_data = LCT.lc_balance_sets(model_df,i)
@@ -62,27 +73,60 @@ def lc_mult_evaluate(scaled_df,model):
         props.append(i)
     return pd.DataFrame({'Proportions':props,'Accuracy':accs,'Precision':precs,'Returns':rets})
 
+def lc_proportion_grid_search(scaled_df,grid_model):
+    model = grid_model
+    model_df = scaled_df
+    accs = []
+    precs = []
+    rets = []
+    props = []
+    t_36_returns = []
+    t_36_deployed_capital = []
+    t_36_returned_capital = []
+    t_60_returns = []
+    t_60_deployed_capital = []
+    t_60_returned_capital = []
+    optimized_parameters = []
+    deployed = []
+    returned = []
+    for i in list(np.arange(0.025,0.20,0.005)):
+        X_train, X_test, y_train, y_test, train_loan_data, test_loan_data = LCT.lc_balance_sets(model_df,i)
+        model.fit(X_train,y_train)
+        y_preds = model.best_estimator_.predict(X_test)
+        prec = precision_score(y_test,y_preds)
+        acc = accuracy_score(y_test,y_preds)
+        overall_return, deployed_capital, returned_capital, t_36_rets,t_36_deployed,t_36_pl,t_60_rets,t_60_deployed,t_60_pl = lc_evaluate_model(y_test,y_preds,test_loan_data)
+        print('Proportion: {}'.format(i))
+        print('Best Parameters: {}'.format(model.best_params_))
+        print('Deployed Capital: {}'.format(deployed_capital))
+        print('Returned Capital: {}'.format(returned_capital))
+        print('36 Month Returns: {}, 36 Month Deployed Capital: {} 36 Month Returned Capital: {}'.format(t_36_rets,t_36_deployed,t_36_pl))
+        print('60 Month Returns: {}, 60 Month Deployed Capital: {} 60 Month Returned Capital: {}'.format(t_60_rets,t_60_deployed,t_60_pl))
+        print('Returns: {}'.format(overall_return))
+        print('Accuracy: {}'.format(acc))
+        print('Precision: {}'.format(prec))
+        print('\n')
+        accs.append(acc)
+        precs.append(prec)
+        rets.append(overall_return)
+        props.append(i)
+        optimized_parameters.append(model.best_params_)
+        deployed.append(deployed_capital)
+        returned.append(returned_capital)
+        t_36_returns.append(t_36_rets)
+        t_36_deployed_capital.append(t_36_deployed)
+        t_36_returned_capital.append(t_36_pl)
+        t_60_returns.append(t_60_rets)
+        t_60_deployed_capital.append(t_60_deployed)
+        t_60_returned_capital.append(t_60_pl)
+    return pd.DataFrame({'Proportions':props,'Returns':rets,'Accuracy':accs,'Precision':precs,'Best_Params':optimized_parameters,'Deployed_Capital':deployed,'Returned_Capital':returned,'36 Month Returns':t_36_returns,'36 Month Deployed Capital':t_36_deployed_capital,'36 Month Returned Capital':t_36_returned_capital,'60 Month Returns':t_60_returns,'60 Month Deployed Capital':t_60_deployed_capital,'60 Month Returned Capital':t_60_returned_capital })
 
 
 
 
-"""
-def grid_search(model, param_grid,X_train,y_train,cv=5):
-    grid_search = GridSearchCV(model,param_grid,cv=cv)
-    grid_search.fit(X_train,y_train)
-    return grid_search.best_params_, grid_search.best_estimator_
-"""
-
-def lc_log_grid(X_train,y_train):
-    pass
 
 
-def lc_rfc_grid(X_train,y_train):
-    pass
 
-
-def lc_xgb_grid(X_train,y_train):
-    pass
 
 
 def lc_score(y_true,y_preds,test_loan_data):
