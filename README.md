@@ -2,17 +2,17 @@
 
 ## Overview
 
-Lending Club is a peer-to-peer lending company founded in 2007 by John Donovan and Renaud Laplanche. The Lending Club platform allows borrowers to create unsecured personal loans between $1,000 and $40,000. Investors earn money by selecting loans to fund and Lending Club earns money by charging borrowers an origination fee and investors a service fee. From Q2'2007 - Q2'2019, the Lending Club platform originated ~ $38.1 billion in loans, most recently originating ~ $2.2B in Q2'19. 
+Lending Club is a peer-to-peer lending company founded in 2007 by John Donovan and Renaud Laplanche. The Lending Club platform allows borrowers to create unsecured personal loans between $1,000 and $40,000. Investors earn money by selecting loans to fund and Lending Club earns money by charging borrowers an origination fee and investors a service fee. From Q2'2007 - Q2'2019, the Lending Club platform originated ~ $38.1 billion in loans, most recently originating ~ $2.2B in Q2'19.
 
-## Data 
+## Data
 
-Lending Club has made their data public [here](https://help.lendingclub.com/hc/en-us/articles/216127307-Data-Dictionaries). The dataset spans ~ 2.5 million loans across 150 features and includes a data dictionary to refer to each term. 
+Lending Club has made their data public [here](https://help.lendingclub.com/hc/en-us/articles/216127307-Data-Dictionaries). The dataset spans ~ 2.5 million loans across 150 features and includes a data dictionary to refer to each term.
 
 ## A First Look
 
 #### Historical Performance
 
-Because we have loans dating back to 2007, we can start by viewing a time series of Lending Club's loans originated per month. The below plot also overlays a plot of the cumulative loan growth as well as Lending Club's stock (NYSE:LC) to see whether loan growth has translated into market capitalization. The below plot also shows (red marker) the date at which Lending Club IPO'ed. 
+Because we have loans dating back to 2007, we can start by viewing a time series of Lending Club's loans originated per month. The below plot also overlays a plot of the cumulative loan growth as well as Lending Club's stock (NYSE:LC) to see whether loan growth has translated into market capitalization. The below plot also shows (red marker) the date at which Lending Club IPO'ed.
 
 <img src="./images/lc_time_series.png"/>
 
@@ -20,7 +20,7 @@ Because we have loans dating back to 2007, we can start by viewing a time series
 
 Post-IPO, Lending CLub's strongest month was Mar'16 when it originated $949.4M in loans on its platform. Since IPO, Lending Club has posted strong yearly loan origination numbers as seen below:
 <p align="center">
-  
+
 |Year|Amount|
 |:---|:-----|
 |2015|$6.4B|
@@ -39,7 +39,7 @@ The loans on Lending Club are classified in 5 categories: Fully Paid, Current, C
 <img src="./images/lc_loan_status.png" width = 7500 />
 </p>
 
-As we can see here, ~85% of Lending Club loans fall under the Fully Paid or Current category, indicating that a sizable chunk of the loans available to investors are performing. To further break these loans down, we can analyze how Lending Club grades loans. 
+As we can see here, ~85% of Lending Club loans fall under the Fully Paid or Current category, indicating that a sizable chunk of the loans available to investors are performing. To further break these loans down, we can analyze how Lending Club grades loans.
 
 Lending Club, at loan origination, gives a loan a grade of A to G and a subgrade of 1 to 5 indicating the financial rating of the borrower based on a proprietary model. The model outputs a number ranging from 1 - 25 which is then translated to a grade and a subgrade. For example, a model rank of 6 would correspond to B1. To dive further into how Lending Club loans perform by grade, we have the below plot:
 
@@ -47,7 +47,7 @@ Lending Club, at loan origination, gives a loan a grade of A to G and a subgrade
 
 The exact $ (expressed in millions )values are as follows:
 <p align="center">
-  
+
 | Grade| Principal Paid Off| Outstanding| Bad Debt|
 |:-----|:------------------|:-----------|:--------|
 | A    | $5,050.3M         | $2,440.4M  | $146.6M |
@@ -60,7 +60,7 @@ The exact $ (expressed in millions )values are as follows:
 
 </p>
 
-Speficially, we can see that Lending Club does a good job rating its loans, with each consecutive grade slightly producing more bad debt than the previous grade. 
+Speficially, we can see that Lending Club does a good job rating its loans, with each consecutive grade slightly producing more bad debt than the previous grade.
 
 #### Geographies
 
@@ -73,7 +73,7 @@ To get a sense of how Lending Club's loans are dispersed throughout the U.S., we
 
 The two plots confirm what may have already been suspected. The largest loan volume is coming from CA, TX, NY, and FL. However, when we look average loan size, we find the following:
 <p align="center">
-  
+
 |State| Avg Loan Size|
 |-----|--------------|
 |CA| $15.5K |
@@ -104,7 +104,7 @@ From this, we can conclude the following points:
 grade_returns.png
 grade_annualized_returns.png
 
-Because Lending Club asigns grades to their loans, we can evaluate the returns by grade on both an actual return and an annualized return basis. Also, because the loans can only take two different term lengths, 36 or 60 months, we can further divide the grades by term length. We hypothesize that the highest returns should be earned by 60 month rated B-D loans as these will have a greater return compared to their respective 36 month counterparts to compensate for the additional holding time required. Also, we expect these loans to outperform others by grade because A loans will have lower rates of return because they are considered the safest and the loans rated E-G will be expected to have high chargeoff rates, diminishing returns. 
+Because Lending Club asigns grades to their loans, we can evaluate the returns by grade on both an actual return and an annualized return basis. Also, because the loans can only take two different term lengths, 36 or 60 months, we can further divide the grades by term length. We hypothesize that the highest returns should be earned by 60 month rated B-D loans as these will have a greater return compared to their respective 36 month counterparts to compensate for the additional holding time required. Also, we expect these loans to outperform others by grade because A loans will have lower rates of return because they are considered the safest and the loans rated E-G will be expected to have high chargeoff rates, diminishing returns.
 
 <img src="./images/grade_returns.png"/>
 
@@ -134,9 +134,9 @@ From the two plots, we can see that the highest performing group is the 36 month
 The data cleaning process included the following:
 -  Removing the loans that have not yet paid off / charged-off. We only want to look at the loans that have completed their maturity so that we can see how a loan performed over the course of the term. Including loans that are currently being paid off would throw off any algorithms as loans that may charge-off in the future may still presently be current.
 
--  Cleaning Features: The majority of this work involved dropping features that would not have been available at the time of loan underwriting as well as converting variables to usable numerical types, whether in the form of scaled numerical features or as a one-hot encoded feature for categorical data. Further, because applications can take on the categories: Individual or Joint, we need to adjust other features that are dependent on this category. 
+-  Cleaning Features: The majority of this work involved dropping features that would not have been available at the time of loan underwriting as well as converting variables to usable numerical types, whether in the form of scaled numerical features or as a one-hot encoded feature for categorical data. Further, because applications can take on the categories: Individual or Joint, we need to adjust other features that are dependent on this category.
 
-The initial cleaned data set yielded the following features: 
+The initial cleaned data set yielded the following features:
 -  Issue year: (Numerical) Year loan was issued
 -  Grade: (Categorical) Lending Club grade assigned to the loan
 -  Subgrade: (Categorical) Lending Club sub-grade assigned to the loan
@@ -152,7 +152,7 @@ The initial cleaned data set yielded the following features:
 -  Employment length: (Numerical) Years in current role
 -  Home ownership: (Categorical) Indicates whether a borrower owns a home, is paying off a mortgage, rents or has some other living situation
 -  Address state: (Categorical) Indicates state the borrower is applying from
--  Earliest credit line: (Numerical) The earliest year the borrower had a credit line 
+-  Earliest credit line: (Numerical) The earliest year the borrower had a credit line
 -  Negative activity: (Numerical) Combination of counts of public record bankruptics and other credit adverse events
 -  Inquiries within the last 6 months: (Numerical) Count of times borrower's credit report was inquired upon within the last 6 months
 -  Delinquencies within the last 6 months: (Numerical) Count of delinquencies within the last 6 months
@@ -161,7 +161,7 @@ The initial cleaned data set yielded the following features:
 -  Mortgage Accounts: (Numerical) Count of open mortgage accounts the borrower has
 -  Total Current Balance: (Numerical) Total outstanding credit of borrower
 -  Revolving: (Numerical) Measures total revolving credit balance
--  Revolving Utilization: (Numerical) Percentage measuring 
+-  Revolving Utilization: (Numerical) Percentage measuring
 -  Loan Status: (Categorical) Indicates whether loan was Fully Paid or Charged-Off
 -  Total Payment: (Numerical) Sum of payments borrower made on credit
 
@@ -173,7 +173,7 @@ To transform the data, we apply Sklearn's StandardScaler and OneHotEncoder on th
 
 ####  Setting up the Training / Testing Split
 
-Our data is split roughly 80 / 20 amongst Fully Paid and Charged-Off loans. We want to start by observing how a basic model will predict with the proportion of the training set balanced and altered. Because we have the historical loan amounts and payoffs as well, we can see how changing the balance split of the target variable affects how our model generates returns. 
+Our data is split roughly 80 / 20 amongst Fully Paid and Charged-Off loans. We want to start by observing how a basic model will predict with the proportion of the training set balanced and altered. Because we have the historical loan amounts and payoffs as well, we can see how changing the balance split of the target variable affects how our model generates returns.
 
 #### Evaluating Target Variable Proportion / Scoring Measures
 
@@ -182,7 +182,7 @@ Before we begin building a model, we must note the goal: Generate the highest am
 <img src="./images/proportion_eval.png"/>
 
 
-From the chart, we can see that optimizing for a higher accuracy actually is causing our returns to decrease and that returns are rising with a higher precision. This makes sense because it is more important that we reduce our False Positives (Predicting a loan will payoff when in reality it charged-off) even at the expense of converting some of our True Positives (Predicting correctly a loan will payoff) to False Negatives (Predicting a loan will charge-off when in reality the loan will payoff). Therefore, we will choose to focus on optimizing our precision / returns moving forward. 
+From the chart, we can see that optimizing for a higher accuracy actually is causing our returns to decrease and that returns are rising with a higher precision. This makes sense because it is more important that we reduce our False Positives (Predicting a loan will payoff when in reality it charged-off) even at the expense of converting some of our True Positives (Predicting correctly a loan will payoff) to False Negatives (Predicting a loan will charge-off when in reality the loan will payoff). Therefore, we will choose to focus on optimizing our precision / returns moving forward.
 
 Also from the charts, it appears that having a greated proportion of charged-off loans in our set improves our model returns. This may be because the model will experience more charge-offs and thus predict negatively more often, thereby increasing our precision and returns. Moving forward, we will choose the proportion that seemed to do best: 0.5, that is to say we will have twice as many Charged-Off loans as Fully Paid loans in our training set.
 
@@ -197,7 +197,7 @@ Also from the charts, it appears that having a greated proportion of charged-off
 |Logistic Regression|0.93 | 0.43 | 6.6%| 39330 | 28039 | 2965| 86673|
 |Random Forest| 0.91 | 0.41 | 6.7% | 37564 | 27432 | 3572 | 88439|
 |Gradient Boosting| 0.93 | 0.43 | 6.4%| 39455 | 28199 | 2805 | 86548|
-|XGradient Boosting| 0.93 | 0.43| 6.5% | 39241 | 28216 | 2788 | 86762 | 
+|XGradient Boosting| 0.93 | 0.43| 6.5% | 39241 | 28216 | 2788 | 86762 |
 
 
 #### Tuning Hyperparameters
@@ -209,7 +209,7 @@ Also from the charts, it appears that having a greated proportion of charged-off
 |Logistic Regression|0.93 | 0.43 | 6.6%| 39335 | 28039 | 2965| 86668|
 |Random Forest| 0.93 | 0.42 | 6.5% | 38139 | 28262 | 2742 | 87864|
 |Gradient Boosting| 0.93 | 0.44 | 6.8%| 40830 | 28076 | 2928 | 85173|
-|XGradient Boosting| 0.94 | 0.41| 6.0% | 35530 | 28534 | 2470 | 90473 | 
+|XGradient Boosting| 0.94 | 0.41| 6.0% | 35530 | 28534 | 2470 | 90473 |
 
 Logistic Regression: {'penalty': 'l1', 'C': 7}
 
@@ -226,7 +226,7 @@ XGradientBoosting: {'n_estimators': 50, 'max_depth': 3, 'learning_rate': 0.1}
 |Logistic Regression|0.93 | 0.43 | 6.6%| 39330 | 28039 | 2965| 86673|
 |Random Forest| 0.95 | 0.31 | 5.3% | 18744 | 29955 | 1049 | 107259|
 |Gradient Boosting| 0.97 | 0.23 | 5.1%| 4934 | 30871 | 121069 | 121|
-|XGradient Boosting| 0.94 | 0.35| 5.2% | 26360 | 29270 | 1734 | 99643 | 
+|XGradient Boosting| 0.94 | 0.35| 5.2% | 26360 | 29270 | 1734 | 99643 |
 
 Logistic Regression: {'penalty': 'l2', 'C': 1}
 
@@ -246,3 +246,4 @@ Now we can see how our models change using a randomized grid search and we find 
 So we can see that a tuned Gradient Boosting Classifer consistently performs the best across all thresholds. In particular, we find that setting the threshold in the range [0.35,0.45] yields a return of ~ 6.9%
 
 
+## Test
