@@ -603,7 +603,7 @@ def plot_36m_returns(returns_df):
     plt.ylabel('Returns (%)',fontsize=25)
     plt.xlabel('Proportion of Majority to Minority Class',fontsize=25)
     plt.title('36 Month Returns by Model and Proportion',fontsize=35,fontweight='bold')
-    plt.savefig('images/returns_60m.png')
+    plt.savefig('images/returns_36m.png')
     plt.show()
 
 def plot_60m_returns(returns_df):
@@ -623,7 +623,7 @@ def plot_60m_returns(returns_df):
     plt.show()
 
 def plot_rets_by_score(return_df):
-    fig = plt.figure(figsize=(25,15))
+    fig = plt.figure(figsize=(35,20))
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
     ax1 = fig.add_subplot(2,1,1)
@@ -660,4 +660,52 @@ def plot_prec_by_prop(return_df):
     ax.tick_params('y',labelsize=25)
     plt.savefig('images/prec_v_prop.png')
     plt.title('Precision vs. Proportion',fontsize=25,fontweight='bold')
+    plt.show()
+
+def plot_36m_deployed(returns_df):
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    colors = ['blue','green','red']
+    fig = plt.figure(figsize=(20,15))
+    ax = fig.add_subplot(1,1,1)
+    for i in range(len(models)):
+        ax.scatter(returns_df[returns_df['model']==models[i]]['Deployed_Capital'] / 1000000,returns_df[returns_df['model']==models[i]]['36 Month Returns'],label=models[i],c=colors[i])
+    plt.legend(prop={'size': 25})
+    ax.tick_params('x',labelsize=25)
+    ax.tick_params('y',labelsize=25)
+    plt.ylabel('Returns (%)',fontsize=25)
+    plt.xlabel('Deployed Capital ($ in millions)',fontsize=25)
+    plt.title('36 Month Returns by Model',fontsize=35,fontweight='bold')
+    plt.savefig('images/returns_36m_deployed.png')
+    plt.show()
+
+def plot_60m_deployed(returns_df):
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    colors = ['blue','green','red']
+    fig = plt.figure(figsize=(20,15))
+    ax = fig.add_subplot(1,1,1)
+    for i in range(len(models)):
+        ax.scatter(returns_df[returns_df['model']==models[i]]['Deployed_Capital'] / 1000000,returns_df[returns_df['model']==models[i]]['60 Month Returns'],label=models[i],c=colors[i])
+    plt.legend(prop={'size': 25})
+    ax.tick_params('x',labelsize=25)
+    ax.tick_params('y',labelsize=25)
+    plt.ylabel('Returns (%)',fontsize=25)
+    plt.xlabel('Deployed Capital ($ in millions)',fontsize=25)
+    plt.title('60 Month Returns by Model',fontsize=35,fontweight='bold')
+    plt.savefig('images/returns_60m_deployed.png')
+    plt.show()
+
+def profits_v_deployed(returns_df):
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    colors = ['blue','green','red']
+    fig = plt.figure(figsize=(20,15))
+    ax = fig.add_subplot(1,1,1)
+    for i in range(len(models)):
+        ax.scatter(returns_df[returns_df['model']==models[i]]['Deployed_Capital'] / 1000000,returns_df[returns_df['model']==models[i]]['Profits'] / 1000000,c=colors[i],label=models[i])
+    ax.tick_params('x',labelsize=25)
+    ax.tick_params('y',labelsize=25)
+    plt.legend(prop={'size': 25})
+    plt.ylabel('Profits ($ in millions)',fontsize=25)
+    plt.xlabel('Deployed Capital ($ in millions)',fontsize=25)
+    plt.title('60 Month Returns by Model',fontsize=35,fontweight='bold')
+    plt.savefig('images/profits_v_deployed.png')
     plt.show()

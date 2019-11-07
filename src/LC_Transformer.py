@@ -83,3 +83,21 @@ def get_pca_df(scaled_df,n_comp):
              , columns = ['pc' + str(i) for i in range(1,n_comp+1)])
     pca_df = pd.concat([principalDf,scaled_df.iloc[:,-4:]],axis=1)
     return pca_df
+
+
+def get_sharpe_models(combined):
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    for i in models:
+        df = combined[combined['model'] ==i]
+        max_ret_df = df[df['Returns']==df['Returns'].max()].tail(1)[['model','Best_Params','Proportions']]
+        max_36_df = df[df['36 Month Returns'] == df['36 Month Returns'].max()].tail(1)[['model','Best_Params','Proportions']]
+        max_60_df = df[df['60 Month Returns'] == df['60 Month Returns'].max()].tail(1)[['model','Best_Params','Proportions']]
+        idx_df = pd.DataFrame({'measure':['best','36m','60m']})
+        p_df = pd.concat([max_ret_df,max_36_df,max_60_df]).reset_index().drop('index',axis=1)
+        if i == 'LogisticRegression':
+            log_df = pd.concat([idx_df,p_df],axis=1)
+        elif i == 'RandomForestClassifier':
+            rfc_df = pd.concat([idx_df,p_df],axis=1)
+        else:
+            gbc_df = pd.concat([idx_df,p_df],axis=1)
+    return pd.concat([log_df,rfc_df,gbc_df])

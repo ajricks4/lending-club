@@ -30,6 +30,7 @@ imp.reload(LCC)
 imp.reload(LCT)
 imp.reload(LCM)
 from sklearn.feature_selection import SelectKBest
+import ast
 
 
 def lc_evaluate_model(y_true,y_preds,df_extra):
@@ -270,3 +271,55 @@ def lc_predict_probas_evaluator(model, X_test, y_test,loan_test_data):
         ret = (np.sum(evals['threshold_'+str(i)] * evals['loan_payoff']) / np.sum((evals['loan_amount'] * evals['threshold_'+str(i)])) - 1)
         rets.append(round(ret,3))
     return list(np.linspace(0.1,0.7,100)),rets
+
+
+def calculate_sharpe_ratios(pca_df,sharpe_matrix,rfo=0.0,rf36 = 0.0,rf60=0.0):
+    df = sharpe_matrix
+    model_list = []
+    sharpe_overall = []
+    sharpe_36m = []
+    sharpe_60m = []
+    params = []
+    proportions = []
+    for i, j in zip(['best','36m','60m'],['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier'] * 3):
+        model_list.append(j + '___' + i)
+        param_dict = ast.literal_eval(df[(df['measure'] ==i) & (df['model']==j)]['Best_Params'].values[0])
+        p = df[(df['measure'] ==i) & (df['model']==j)]['Proportions'].values[0]
+        params.append(param_dict)
+        proportions.append(p)
+        rets = []
+        rets_36m = []
+        rets_60m = []
+        avg_rets = []
+        avg_rets_36m = []
+        avg_rets_60m = []
+        for k in range(100):
+            print('Running iteration: {}'.format(k+1))
+            X_train, X_test, y_train, y_test, train_loan_data, test_loan_data = LCT.lc_balance_sets(pca_df,p)
+            if j == 'LogisticRegression':
+                mod = LogisticRegression(**param_dict)
+            elif j =='RandomForestClassifier':
+                mod = RandomForestClassifier(**param_dict)
+            else:
+                mod = GradientBoostingClassifier(**param_dict)
+            mod.fit(X_train,y_train)
+            y_preds = mod.predict(X_test)
+            overall_return, deployed_capital, returned_capital, t_36_rets,t_36_deployed,t_36_pl,t_60_rets,t_60_deployed,t_60_pl = lc_evaluate_model(y_test,y_preds,test_loan_data)
+            rets.append(overall_return)
+            rets_36m.append(t_36_rets)
+            rets.append(t_60_rets)
+        sharpe_overall.append(sharpe_calc(rets,rfo))
+        sharpe_36m.append(sharpe_calc(rets_36m,rf36))
+        sharpe_60m.append(sharpe_calc(rets_60m,rf60))
+        avg_rets.append(np.mean(rets))
+        avg_rets_36.append(np.mean(rets_36m))
+        avg_rets_60.append(np.mean(rets_60m))
+        print('\n')
+        print('Completed batch: {}'.format(j+ '___'+i))
+        print('-------------------------------------')
+    return pd.DataFrame({'Model':model_list,'Sharpe_Overall':sharpe_overall,'Sharpe_36m':sharpe_36m,'Sharpe_60m':sharpe_60m,'Avg Return':avg_rets,'Avg 36m Return':avg_rets_36m,'Avg 60m Return':avg_rets_60m})
+
+
+
+def sharpe_calc(ret_list,rf):
+    return (np.mean(ret_list) - rf) / np.std(ret_list)

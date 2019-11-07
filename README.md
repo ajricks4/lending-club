@@ -4,6 +4,15 @@
 
 Lending Club is a peer-to-peer lending company founded in 2007 by John Donovan and Renaud Laplanche. The Lending Club platform allows borrowers to create unsecured personal loans between $1,000 and $40,000. Investors earn money by selecting loans to fund and Lending Club earns money by charging borrowers an origination fee and investors a service fee. From Q2'2007 - Q2'2019, the Lending Club platform originated ~ $38.1 billion in loans, most recently originating ~ $2.2B in Q2'19.
 
+## Motivation
+
+
+Consumers and investors alike have faced the issue of how to optimize their investment portfolio or how to earn a return on excess cash.  Traditional portfolio management and investment selection is time consuming and complex, leading to the rise of passively managed investment funds for consumers. However, most funds offer standard equity / bond splits with minimal alternative asset selection. Bond investment has also been increasingly tough given the lower rates set by the Federal Reserve and observed in the Treasury Bond yields below:
+
+<img src="./images/yield.png"/>
+<br><br>
+Lending Club's loan platform and open data sets offer us the opportunity to make use of predictive models to attempt to generate higher yield on an alternative asset class.
+
 ## Data
 
 Lending Club has made their data public [here](https://help.lendingclub.com/hc/en-us/articles/216127307-Data-Dictionaries). The dataset spans ~ 2.5 million loans across 150 features and includes a data dictionary to refer to each term.
@@ -60,7 +69,13 @@ The exact $ (expressed in millions )values are as follows:
 
 </p>
 
-Speficially, we can see that Lending Club does a good job rating its loans, with each consecutive grade slightly producing more bad debt than the previous grade.
+Specifically, we can see that Lending Club does a good job rating its loans, with each consecutive grade slightly producing more bad debt than the previous grade.
+
+Additionally, we can observe the relative proportion of fully-paid loans to charged-off loans in the below plot.
+
+<img src="./images/loan_outcome_proportions.png"/>
+<br><br>
+We can see that the proportion of good loans on the platform has mostly increased over time, currently settling at ~92%. Applying this information to predictive analytics, we can see that simply picking every loan would lead to a high accuracy metric but we want to also avoid the troubled loans, leading to the idea that precision is a better metric to score our models.
 
 #### Geographies
 
@@ -167,7 +182,13 @@ The initial cleaned data set yielded the following features:
 
 Note that the Loan Status feature is picked as our target variable and the Total Payment feature was kept in the dataset so as to calculate investing returns after training an algorithm.
 
-To transform the data, we apply Sklearn's StandardScaler and OneHotEncoder on the numerical and categorical features respectively. Now it is time to start Machine Learning!
+To transform the data, we apply Sklearn's StandardScaler and OneHotEncoder on the numerical and categorical features respectively. To further improve our training data set, we will apply PCA tp find the principal components. Below is the cumulative sum of the pca explained variance results.
+
+<img src='images/pca_explained_variance.png'/>
+<br><br>
+We see that ~20 components explain 95% of the variance which shows significant dimensionality reduction from the vast number of features we started with.  
+<br><br>
+Now it is time to start Machine Learning!
 
 ## Training Models
 
@@ -177,73 +198,20 @@ Our data is split roughly 80 / 20 amongst Fully Paid and Charged-Off loans. We w
 
 #### Evaluating Target Variable Proportion / Scoring Measures
 
-Before we begin building a model, we must note the goal: Generate the highest amount of returns for a hypothetical loan portfolio. After running a series of proportions using a RandomForestClassifier with the default parameters, we produce the following:
+We choose the following models to perform a grid search for to tune parameters to optimize returns. We will also implement a grid search on the proportion split between the majority and minority class. Some parameters may be optimal at lower proportions and so we do not want to pick an arbitrary proportion and have to tune parameters to that. After performing grid searches on the following models:
+-  Logistic Regression
+-  Random Forest Classifier
+-  Gradient Boosting Classifier
 
-<img src="./images/proportion_eval.png"/>
+Additionally, because there are two types of loan maturities (36 month term and 60 month term), we can evaluate the returns on either class that our predictive models generate:
 
+<img src="images/returns_36m.png"/>
+<img src="images/returns_60m.png"/>
+<br><br>
+We can see that the models produce the highest returns at a proportion of ~0.1 : 1 of the majority class to the minority class. Additionally, we observe that increasing the proportion of the majority to the minority class to  1:1 (50-50 split) causes the returns generated by the models to decrease and converge to ~6.0% in the case of 36 month term loans and to ~6.8% in the case of 60 month term loans.
 
-From the chart, we can see that optimizing for a higher accuracy actually is causing our returns to decrease and that returns are rising with a higher precision. This makes sense because it is more important that we reduce our False Positives (Predicting a loan will payoff when in reality it charged-off) even at the expense of converting some of our True Positives (Predicting correctly a loan will payoff) to False Negatives (Predicting a loan will charge-off when in reality the loan will payoff). Therefore, we will choose to focus on optimizing our precision / returns moving forward.
+Combining the two sets of returns generated by the algorithms, we can view the blended returns and see how this fluctuates with regards to different scoring metrics. In investing, avoiding bad investments is a large aspect of protecting capital to eventually capture returns from performing assets. Below we see how the blended returns change with regards to accuracy and precision.
 
-Also from the charts, it appears that having a greated proportion of charged-off loans in our set improves our model returns. This may be because the model will experience more charge-offs and thus predict negatively more often, thereby increasing our precision and returns. Moving forward, we will choose the proportion that seemed to do best: 0.5, that is to say we will have twice as many Charged-Off loans as Fully Paid loans in our training set.
-
-## Model Evaluation
-
-#### Default Models
-
-<img src="./images/Default_Models.png"/>
-
-|Model|Precision|Accuracy|Returns|TP|TN|FP | FN|
-|-----|---------|--------|-------|--|--|---|---|
-|Logistic Regression|0.93 | 0.43 | 6.6%| 39330 | 28039 | 2965| 86673|
-|Random Forest| 0.91 | 0.41 | 6.7% | 37564 | 27432 | 3572 | 88439|
-|Gradient Boosting| 0.93 | 0.43 | 6.4%| 39455 | 28199 | 2805 | 86548|
-|XGradient Boosting| 0.93 | 0.43| 6.5% | 39241 | 28216 | 2788 | 86762 |
-
-
-#### Tuning Hyperparameters
-
-<img src="./images/r_grid_acc.png">
-
-|Model|Precision|Accuracy|Returns|TP|TN|FP | FN|
-|-----|---------|--------|-------|--|--|---|---|
-|Logistic Regression|0.93 | 0.43 | 6.6%| 39335 | 28039 | 2965| 86668|
-|Random Forest| 0.93 | 0.42 | 6.5% | 38139 | 28262 | 2742 | 87864|
-|Gradient Boosting| 0.93 | 0.44 | 6.8%| 40830 | 28076 | 2928 | 85173|
-|XGradient Boosting| 0.94 | 0.41| 6.0% | 35530 | 28534 | 2470 | 90473 |
-
-Logistic Regression: {'penalty': 'l1', 'C': 7}
-
-Random Forest: {'n_estimators': 20, 'min_samples_split': 5, 'min_samples_leaf': 10, 'max_features': 'sqrt', 'max_depth': 15}
-
-Gradient Boosting: {'n_estimators': 50, 'max_depth': 6, 'learning_rate': 0.1}
-
-XGradientBoosting: {'n_estimators': 50, 'max_depth': 3, 'learning_rate': 0.1}
-
-<img src="./images/r_grid_prec.png">
-
-|Model|Precision|Accuracy|Returns|TP|TN|FP | FN|
-|-----|---------|--------|-------|--|--|---|---|
-|Logistic Regression|0.93 | 0.43 | 6.6%| 39330 | 28039 | 2965| 86673|
-|Random Forest| 0.95 | 0.31 | 5.3% | 18744 | 29955 | 1049 | 107259|
-|Gradient Boosting| 0.97 | 0.23 | 5.1%| 4934 | 30871 | 121069 | 121|
-|XGradient Boosting| 0.94 | 0.35| 5.2% | 26360 | 29270 | 1734 | 99643 |
-
-Logistic Regression: {'penalty': 'l2', 'C': 1}
-
-Random Forest: {'n_estimators': 20, 'min_samples_split': 7, 'min_samples_leaf': 10, 'max_features': 'auto', 'max_depth': 3}
-
-Gradient Boosting
-Best Params: {'n_estimators': 50, 'max_depth': 6, 'learning_rate': 0.01}
-
-XGradientBoosting: {'n_estimators': 10, 'max_depth': 3, 'learning_rate': 0.01}
-
-
-Now we can see how our models change using a randomized grid search and we find that actually the models that are tuned using a scoring = accuracy metric are outperforming the models tuned to scoring = precision. This is interesting because it means that we have actually achieved high returns by balancing our training data in a way that maximizes precision and then training models to maximize accuracy. Below we can see how the models tuned for accuracy perform under different probability thresholds:
-
-
-<img src="./images/returns_and_thresholds.png">
-
-So we can see that a tuned Gradient Boosting Classifer consistently performs the best across all thresholds. In particular, we find that setting the threshold in the range [0.35,0.45] yields a return of ~ 6.9%
-
-
-## Test
+<img src="./images/rets_scoring_metrics.png"/>
+<br><br>
+We can see that we experience the highest returns when accuracy is low and precision is high. This makes sense because we are lowering accuracy in order to make sure that we only pick good loans. We can then view how to maximize precision based on proportion to get a better idea of which proportion of the majority / minority class to choose. 
