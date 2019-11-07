@@ -1,6 +1,7 @@
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, train_test_split
 import pandas as pd
+from sklearn.decomposition import PCA, NMF
 
 def lc_transform(df_original):
     df = df_original.copy()
@@ -74,3 +75,11 @@ def lc_balance_sets(scaled_df,proportion = 1):
     test_loan_data = X_test[['term','loan_amount','loan_payoff']]
     X_test.drop(['term','loan_amount','loan_payoff'],axis=1,inplace=True)
     return X_train, X_test, y_train, y_test, train_loan_data, test_loan_data
+
+def get_pca_df(scaled_df,n_comp):
+    pca = PCA(n_components=n_comp)
+    principalComponents = pca.fit_transform(scaled_df.iloc[:,:-4])
+    principalDf = pd.DataFrame(data = principalComponents
+             , columns = ['pc' + str(i) for i in range(1,n_comp+1)])
+    pca_df = pd.concat([principalDf,scaled_df.iloc[:,-4:]],axis=1)
+    return pca_df

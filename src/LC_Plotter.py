@@ -9,6 +9,7 @@ import plotly
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 init_notebook_mode(connected=True)
 import src.LC_Models as LCM
+from sklearn.decomposition import PCA, NMF
 
 
 
@@ -570,3 +571,93 @@ def prop_cohort(row,cohort_df):
     yr = row['issue_d_year']
     yr_amnt = cohort_df[cohort_df['issue_d_year'] == yr]['funded_amnt'].sum()
     return row['funded_amnt'] / yr_amnt
+
+def pca_plotter(pca_df):
+    scaled_df = pca_df
+    pca = PCA(n_components=40)
+    principalComponents = pca.fit_transform(scaled_df.iloc[:,:-4])
+    principalDf = pd.DataFrame(data = principalComponents
+             , columns = ['pc' + str(i) for i in range(1,41)])
+    pca_df = pd.concat([principalDf,scaled_df.iloc[:,-4:]],axis=1)
+    plt.plot(np.cumsum(pca.explained_variance_ / sum(pca.explained_variance_)))
+    plt.title('PCA - Explained Variance')
+    plt.xlabel('Number of Components')
+    plt.ylabel('Variance')
+    plt.axhline(0.95,c='r',label = '95% Variance')
+    plt.savefig('images/pca_explained_variance.png')
+    plt.show()
+
+
+
+
+def plot_36m_returns(returns_df):
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    colors = ['blue','green','red']
+    fig = plt.figure(figsize=(20,15))
+    ax = fig.add_subplot(1,1,1)
+    for i in range(len(models)):
+        ax.scatter(returns_df[returns_df['model']==models[i]]['Proportions'],returns_df[returns_df['model']==models[i]]['36 Month Returns'],label=models[i],c=colors[i])
+    plt.legend(prop={'size': 25})
+    ax.tick_params('x',labelsize=25)
+    ax.tick_params('y',labelsize=25)
+    plt.ylabel('Returns (%)',fontsize=25)
+    plt.xlabel('Proportion of Majority to Minority Class',fontsize=25)
+    plt.title('36 Month Returns by Model and Proportion',fontsize=35,fontweight='bold')
+    plt.savefig('images/returns_60m.png')
+    plt.show()
+
+def plot_60m_returns(returns_df):
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    colors = ['blue','green','red']
+    fig = plt.figure(figsize=(20,15))
+    ax2 = fig.add_subplot(1,1,1)
+    for j in range(len(models)):
+        ax2.scatter(returns_df[returns_df['model']==models[j]]['Proportions'],returns_df[returns_df['model']==models[j]]['60 Month Returns'],label=models[j],c=colors[j])
+    plt.legend(prop={'size': 25})
+    ax2.tick_params('x',labelsize=25)
+    ax2.tick_params('y',labelsize=25)
+    plt.ylabel('Returns (%)',fontsize=25)
+    plt.xlabel('Proportion of Majority to Minority Class',fontsize=25)
+    plt.title('60 Month Returns by Model and Proportion',fontsize=35,fontweight='bold')
+    plt.savefig('images/returns_60m.png')
+    plt.show()
+
+def plot_rets_by_score(return_df):
+    fig = plt.figure(figsize=(25,15))
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    colors = ['blue','green','red']
+    ax1 = fig.add_subplot(2,1,1)
+    for i in range(len(models)):
+        ax1.scatter(return_df[return_df['model']==models[i]]['Accuracy'],return_df[return_df['model']==models[i]]['Returns'],c=colors[i],label=models[i])
+    plt.legend(prop={'size': 35})
+    ax1.tick_params('x',labelsize=30)
+    ax1.tick_params('y',labelsize=30)
+    plt.ylabel('Returns (%)',fontsize=35)
+    plt.xlabel('Accuracy',fontsize=35)
+    plt.title('Blended Returns vs. Accuracy',fontsize=40,fontweight='bold')
+    ax2 = fig.add_subplot(2,1,2)
+    for j in range(len(models)):
+        ax2.scatter(return_df[return_df['model']==models[j]]['Precision'],return_df[return_df['model']==models[j]]['Returns'],c=colors[j],label=models[j])
+    plt.legend(prop={'size': 35})
+    ax2.tick_params('x',labelsize=30)
+    ax2.tick_params('y',labelsize=30)
+    plt.ylabel('Returns (%)',fontsize=35)
+    plt.xlabel('Precision',fontsize=35)
+    plt.title('Blended Returns vs. Precision',fontsize=40,fontweight='bold')
+    plt.savefig('images/rets_scoring_metrics.png')
+    plt.tight_layout()
+    plt.show()
+
+def plot_prec_by_prop(return_df):
+    fig = plt.figure(figsize=(20,15))
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    colors = ['blue','green','red']
+    ax = fig.add_subplot(1,1,1)
+    for i in range(len(models)):
+        ax.scatter(return_df[return_df['model'] == models[i]]['Proportions'],return_df[return_df['model'] == models[i]]['Precision'],label=models[i],c=colors[i])
+    plt.legend(prop={'size':25})
+    ax.tick_params('x',labelsize=25)
+    ax.tick_params('y',labelsize=25)
+    plt.savefig('images/prec_v_prop.png')
+    plt.title('Precision vs. Proportion',fontsize=25,fontweight='bold')
+    plt.show()

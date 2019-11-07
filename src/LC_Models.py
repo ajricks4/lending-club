@@ -73,7 +73,7 @@ def lc_mult_evaluate(scaled_df,model):
         props.append(i)
     return pd.DataFrame({'Proportions':props,'Accuracy':accs,'Precision':precs,'Returns':rets})
 
-def lc_proportion_grid_search(scaled_df,grid_model):
+def lc_proportion_grid_search(scaled_df,grid_model,rang=list(np.arange(0.025,0.51,0.025))):
     model = grid_model
     model_df = scaled_df
     accs = []
@@ -89,22 +89,28 @@ def lc_proportion_grid_search(scaled_df,grid_model):
     optimized_parameters = []
     deployed = []
     returned = []
-    for i in list(np.arange(0.025,0.20,0.005)):
+    profits = []
+    for i in rang:
         X_train, X_test, y_train, y_test, train_loan_data, test_loan_data = LCT.lc_balance_sets(model_df,i)
         model.fit(X_train,y_train)
         y_preds = model.best_estimator_.predict(X_test)
         prec = precision_score(y_test,y_preds)
         acc = accuracy_score(y_test,y_preds)
         overall_return, deployed_capital, returned_capital, t_36_rets,t_36_deployed,t_36_pl,t_60_rets,t_60_deployed,t_60_pl = lc_evaluate_model(y_test,y_preds,test_loan_data)
+        profit = returned_capital - deployed_capital
         print('Proportion: {}'.format(i))
+        print('\n')
         print('Best Parameters: {}'.format(model.best_params_))
-        print('Deployed Capital: {}'.format(deployed_capital))
-        print('Returned Capital: {}'.format(returned_capital))
-        print('36 Month Returns: {}, 36 Month Deployed Capital: {} 36 Month Returned Capital: {}'.format(t_36_rets,t_36_deployed,t_36_pl))
-        print('60 Month Returns: {}, 60 Month Deployed Capital: {} 60 Month Returned Capital: {}'.format(t_60_rets,t_60_deployed,t_60_pl))
         print('Returns: {}'.format(overall_return))
+        print('Profit: {}'.format(round(profit,2)))
         print('Accuracy: {}'.format(acc))
         print('Precision: {}'.format(prec))
+        print('Deployed Capital: {}'.format(deployed_capital))
+        print('Returned Capital: {}'.format(returned_capital))
+        print('36 Month Returns: {}, 36 Month Deployed Capital: {} 36 Month Returned Capital: {}'.format(t_36_rets,round(t_36_deployed,1),round(t_36_pl,1)))
+        print('60 Month Returns: {}, 60 Month Deployed Capital: {} 60 Month Returned Capital: {}'.format(t_60_rets,round(t_60_deployed,1),round(t_60_pl,1)))
+        print(confusion_matrix(y_test,y_preds))
+        print('---------------------------------------')
         print('\n')
         accs.append(acc)
         precs.append(prec)
@@ -119,8 +125,8 @@ def lc_proportion_grid_search(scaled_df,grid_model):
         t_60_returns.append(t_60_rets)
         t_60_deployed_capital.append(t_60_deployed)
         t_60_returned_capital.append(t_60_pl)
-    return pd.DataFrame({'Proportions':props,'Returns':rets,'Accuracy':accs,'Precision':precs,'Best_Params':optimized_parameters,'Deployed_Capital':deployed,'Returned_Capital':returned,'36 Month Returns':t_36_returns,'36 Month Deployed Capital':t_36_deployed_capital,'36 Month Returned Capital':t_36_returned_capital,'60 Month Returns':t_60_returns,'60 Month Deployed Capital':t_60_deployed_capital,'60 Month Returned Capital':t_60_returned_capital })
-
+        profits.append(profit)
+    return pd.DataFrame({'Proportions':props,'Returns':rets,'Profits':profits,'Accuracy':accs,'Precision':precs,'Best_Params':optimized_parameters,'Deployed_Capital':deployed,'Returned_Capital':returned,'36 Month Returns':t_36_returns,'36 Month Deployed Capital':t_36_deployed_capital,'36 Month Returned Capital':t_36_returned_capital,'60 Month Returns':t_60_returns,'60 Month Deployed Capital':t_60_deployed_capital,'60 Month Returned Capital':t_60_returned_capital })
 
 
 
@@ -133,7 +139,7 @@ def lc_score(y_true,y_preds,test_loan_data):
     print(confusion_matrix(y_true,y_preds))
     prec = precision_score(y_true,y_preds)
     acc = accuracy_score(y_true,y_preds)
-    overall_return = lc_evaluate_model(y_true,y_preds, test_loan_data)
+    overall_return, deployed_capital, returned_capital, t_36_rets,t_36_deployed,t_36_pl,t_60_rets,t_60_deployed,t_60_pl = lc_evaluate_model(y_true,y_preds, test_loan_data)
     print('\n')
     print('{}: {}'.format('accuracy',acc))
     print('{}: {}'.format('precision',prec))
