@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas_profiling as pdp
 import matplotlib as mpl
-import plotly.graph_objs as go
-import plotly
-from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
-init_notebook_mode(connected=True)
+#import plotly.graph_objs as go
+#import plotly
+#from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+#init_notebook_mode(connected=True)
 import src.LC_Models as LCM
 from sklearn.decomposition import PCA, NMF
 
@@ -622,11 +622,11 @@ def plot_60m_returns(returns_df):
     plt.savefig('images/returns_60m.png')
     plt.show()
 
-def plot_rets_by_score(return_df):
-    fig = plt.figure(figsize=(35,20))
+def plot_rets_v_acc(return_df):
+    fig = plt.figure(figsize=(20,15))
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
-    ax1 = fig.add_subplot(2,1,1)
+    ax = fig.add_subplot(1,1,1)
     for i in range(len(models)):
         ax1.scatter(return_df[return_df['model']==models[i]]['Accuracy'],return_df[return_df['model']==models[i]]['Returns'],c=colors[i],label=models[i])
     plt.legend(prop={'size': 35})
@@ -635,18 +635,26 @@ def plot_rets_by_score(return_df):
     plt.ylabel('Returns (%)',fontsize=35)
     plt.xlabel('Accuracy',fontsize=35)
     plt.title('Blended Returns vs. Accuracy',fontsize=40,fontweight='bold')
-    ax2 = fig.add_subplot(2,1,2)
-    for j in range(len(models)):
-        ax2.scatter(return_df[return_df['model']==models[j]]['Precision'],return_df[return_df['model']==models[j]]['Returns'],c=colors[j],label=models[j])
-    plt.legend(prop={'size': 35})
-    ax2.tick_params('x',labelsize=30)
-    ax2.tick_params('y',labelsize=30)
-    plt.ylabel('Returns (%)',fontsize=35)
-    plt.xlabel('Precision',fontsize=35)
-    plt.title('Blended Returns vs. Precision',fontsize=40,fontweight='bold')
-    plt.savefig('images/rets_scoring_metrics.png')
-    plt.tight_layout()
+    plt.savefig('images/returns_v_acc.png')
     plt.show()
+
+def plot_rets_v_prec(return_df):
+    fig = plt.figure(figsize=(20,15))
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    colors = ['blue','green','red']
+    ax2 = fig.add_subplot(1,1,1)
+    for i in range(len(models)):
+        ax1.scatter(return_df[return_df['model']==models[i]]['Accuracy'],return_df[return_df['model']==models[i]]['Returns'],c=colors[i],label=models[i])
+    plt.legend(prop={'size': 35})
+    ax1.tick_params('x',labelsize=30)
+    ax1.tick_params('y',labelsize=30)
+    plt.ylabel('Returns (%)',fontsize=35)
+    plt.xlabel('Accuracy',fontsize=35)
+    plt.title('Blended Returns vs. Accuracy',fontsize=40,fontweight='bold')
+    plt.savefig('images/returns_v_prec')
+
+
+
 
 def plot_prec_by_prop(return_df):
     fig = plt.figure(figsize=(20,15))

@@ -39,15 +39,15 @@ def lc_evaluate_model(y_true,y_preds,df_extra):
     evals['investments'] = round(evals['y_preds'] * evals['loan_amount'],3)
     evals['profit_loss'] = round(evals['y_preds'] * evals['loan_payoff'],3)
     evals = evals.groupby('term').sum()
-    overall_return = round((evals['profit_loss'].sum() / evals['investments'].sum() - 1) * 100 ,1)
+    overall_return = round((evals['profit_loss'].sum() / evals['investments'].sum() - 1) * 100 ,4)
     deployed_capital = evals['investments'].sum()
     returned_capital = evals['profit_loss'].sum()
     t_36_pl = evals.loc[36,'profit_loss']
     t_36_deployed = evals.loc[36,'investments']
-    t_36_rets = round((t_36_pl / t_36_deployed - 1) * 100,2)
+    t_36_rets = round((t_36_pl / t_36_deployed - 1) * 100,4)
     t_60_pl = evals.loc[60,'profit_loss']
     t_60_deployed = evals.loc[60,'investments']
-    t_60_rets = round((t_60_pl / t_60_deployed - 1) * 100,2)
+    t_60_rets = round((t_60_pl / t_60_deployed - 1) * 100,4)
 
     return overall_return, deployed_capital, returned_capital, t_36_rets,t_36_deployed,t_36_pl,t_60_rets,t_60_deployed,t_60_pl
 
@@ -103,13 +103,13 @@ def lc_proportion_grid_search(scaled_df,grid_model,rang=list(np.arange(0.025,0.5
         print('\n')
         print('Best Parameters: {}'.format(model.best_params_))
         print('Returns: {}'.format(overall_return))
-        print('Profit: {}'.format(round(profit,2)))
+        print('Profit: {}'.format(round(profit,3)))
         print('Accuracy: {}'.format(acc))
         print('Precision: {}'.format(prec))
         print('Deployed Capital: {}'.format(deployed_capital))
         print('Returned Capital: {}'.format(returned_capital))
-        print('36 Month Returns: {}, 36 Month Deployed Capital: {} 36 Month Returned Capital: {}'.format(t_36_rets,round(t_36_deployed,1),round(t_36_pl,1)))
-        print('60 Month Returns: {}, 60 Month Deployed Capital: {} 60 Month Returned Capital: {}'.format(t_60_rets,round(t_60_deployed,1),round(t_60_pl,1)))
+        print('36 Month Returns: {}, 36 Month Deployed Capital: {} 36 Month Returned Capital: {}'.format(t_36_rets,round(t_36_deployed,2),round(t_36_pl,2)))
+        print('60 Month Returns: {}, 60 Month Deployed Capital: {} 60 Month Returned Capital: {}'.format(t_60_rets,round(t_60_deployed,2),round(t_60_pl,2)))
         print(confusion_matrix(y_test,y_preds))
         print('---------------------------------------')
         print('\n')
@@ -281,6 +281,9 @@ def calculate_sharpe_ratios(pca_df,sharpe_matrix,rfo=0.0,rf36 = 0.0,rf60=0.0):
     sharpe_60m = []
     params = []
     proportions = []
+    deployed_mean = []
+    deployed_36mean = []
+    deployed_60mean = []
     for i, j in zip(['best','36m','60m'],['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier'] * 3):
         model_list.append(j + '___' + i)
         param_dict = ast.literal_eval(df[(df['measure'] ==i) & (df['model']==j)]['Best_Params'].values[0])
@@ -293,8 +296,12 @@ def calculate_sharpe_ratios(pca_df,sharpe_matrix,rfo=0.0,rf36 = 0.0,rf60=0.0):
         avg_rets = []
         avg_rets_36m = []
         avg_rets_60m = []
+        deployed = []
+        deployed_36 = []
+        deployed_60 = []
         for k in range(100):
             print('Running iteration: {}'.format(k+1))
+
             X_train, X_test, y_train, y_test, train_loan_data, test_loan_data = LCT.lc_balance_sets(pca_df,p)
             if j == 'LogisticRegression':
                 mod = LogisticRegression(**param_dict)
@@ -307,18 +314,90 @@ def calculate_sharpe_ratios(pca_df,sharpe_matrix,rfo=0.0,rf36 = 0.0,rf60=0.0):
             overall_return, deployed_capital, returned_capital, t_36_rets,t_36_deployed,t_36_pl,t_60_rets,t_60_deployed,t_60_pl = lc_evaluate_model(y_test,y_preds,test_loan_data)
             rets.append(overall_return)
             rets_36m.append(t_36_rets)
-            rets.append(t_60_rets)
+            rets_60m.append(t_60_rets)
+            deployed.append(deployed_capital)
+            deployed_36.append(t_36_deployed)
+            deployed_60.append(t_60_deployed)
+        sharpe_overall.append(sharpe_calc(rets,rfo))
+        sharpe_36m.append(sharpe_calc(rets_36m,rf36))
+        sharpe_60m.append(sharpe_calc(rets_60m,rf60))
+        avg_rets.append(np.mean(rets))
+        avg_rets_36m.append(np.mean(rets_36m))
+        avg_rets_60m.append(np.mean(rets_60m))
+        deployed_mean.append(np.mean(deployed))
+        deployed_36mean.append(np.mean(deployed_36))
+        deployed_60mean.append(np.mean(deployed_60))
+        print('\n')
+        print('Completed batch: {}'.format(j+ '___'+i))
+        print('-------------------------------------')
+    return pd.DataFrame({'Model':model_list,'Sharpe_Overall':sharpe_overall,'Sharpe_36m':sharpe_36m,'Sharpe_60m':sharpe_60m,'Avg Return':avg_rets,'Avg 36m Return':avg_rets_36m,'Avg 60m Return':avg_rets_60m,'Proportions':proportions,'Deployed':deployed_mean,'Deployed 36m':deployed_36mean,'Deployed 60m':deployed_60mean})
+
+def sharpe_models_large_p(pca_df,combined_df,rfo=0.0,rf36 = 0.0,rf60=0.0):
+    mods = ['LogisticRegression']*3 + ['RandomForestClassifier']*3 + ['GradientBoostingClassifier']
+    rands = []
+    props = []
+    while len(rands) < len(mods):
+        x = np.random.rand()
+        if x < 0.2:
+            continue
+        else:
+            rands.append(x)
+    params = []
+    model_list = []
+    sharpe_overall = []
+    sharpe_36m = []
+    sharpe_60m = []
+    params = []
+    proportions = []
+    deployed_mean = []
+    deployed_36mean = []
+    deployed_60mean = []
+    for m,r in zip(mods,rands):
+        model_list.append(j + '___' + i)
+        rets = []
+        rets_36m = []
+        rets_60m = []
+        avg_rets = []
+        avg_rets_36m = []
+        avg_rets_60m = []
+        deployed = []
+        deployed_36 = []
+        deployed_60 = []
+        data_row = combined_df[(combined_df['model'] == m) & (combined_df['Proportions'] - r < 0.01)].tail(1)
+        p = combined_df['Proportions'].values[0]
+        param_dict = ast.literal_eval(data_row['Best_Params'].values[0])
+        params.append(param_dict)
+        props.append(p)
+        for k in range(100):
+            if m == 'LogisticRegression':
+                mod = LogisticRegression(**param_dict)
+            elif m == 'RandomForestClassifier':
+                mod = RandomForestClassifier(**params)
+            else:
+                mod = GradientBoostingClassifier(**params)
+            X_train, X_test, y_train, y_test, train_loan_data, test_loan_data = LCT.lc_balance_sets(pca_df,p)
+            mod.fit(X_train,y_train)
+            y_preds = mod.predict(X_test)
+            overall_return, deployed_capital, returned_capital, t_36_rets,t_36_deployed,t_36_pl,t_60_rets,t_60_deployed,t_60_pl = lc_evaluate_model(y_test,y_preds,test_loan_data)
+            rets.append(overall_return)
+            rets_36m.append(t_36_rets)
+            rets_60m.append(t_60_rets)
+            deployed.append(deployed_capital)
+            deployed_36.append(t_36_deployed)
+            deployed_60.append(t_60_deployed)
         sharpe_overall.append(sharpe_calc(rets,rfo))
         sharpe_36m.append(sharpe_calc(rets_36m,rf36))
         sharpe_60m.append(sharpe_calc(rets_60m,rf60))
         avg_rets.append(np.mean(rets))
         avg_rets_36.append(np.mean(rets_36m))
         avg_rets_60.append(np.mean(rets_60m))
+        deployed_mean.append(np.mean(deployed))
+        deployed_36mean.append(np.mean(deployed_36))
+        deployed_60mean.append(np.mean(deployed_60))
         print('\n')
         print('Completed batch: {}'.format(j+ '___'+i))
         print('-------------------------------------')
-    return pd.DataFrame({'Model':model_list,'Sharpe_Overall':sharpe_overall,'Sharpe_36m':sharpe_36m,'Sharpe_60m':sharpe_60m,'Avg Return':avg_rets,'Avg 36m Return':avg_rets_36m,'Avg 60m Return':avg_rets_60m})
-
+    return pd.DataFrame({'Model':model_list,'Sharpe_Overall':sharpe_overall,'Sharpe_36m':sharpe_36m,'Sharpe_60m':sharpe_60m,'Avg Return':avg_rets,'Avg 36m Return':avg_rets_36m,'Avg 60m Return':avg_rets_60m,'Proportions':proportions,'Deployed':deployed_mean,'Deployed 36m':deployed_36mean,'Deployed 60m':deployed_60mean})
 
 
 def sharpe_calc(ret_list,rf):
