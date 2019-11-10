@@ -626,7 +626,7 @@ def plot_rets_v_acc(return_df):
     fig = plt.figure(figsize=(20,15))
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
-    ax = fig.add_subplot(1,1,1)
+    ax1 = fig.add_subplot(1,1,1)
     for i in range(len(models)):
         ax1.scatter(return_df[return_df['model']==models[i]]['Accuracy'],return_df[return_df['model']==models[i]]['Returns'],c=colors[i],label=models[i])
     plt.legend(prop={'size': 35})
@@ -642,16 +642,17 @@ def plot_rets_v_prec(return_df):
     fig = plt.figure(figsize=(20,15))
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
-    ax2 = fig.add_subplot(1,1,1)
+    ax1 = fig.add_subplot(1,1,1)
     for i in range(len(models)):
         ax1.scatter(return_df[return_df['model']==models[i]]['Accuracy'],return_df[return_df['model']==models[i]]['Returns'],c=colors[i],label=models[i])
     plt.legend(prop={'size': 35})
     ax1.tick_params('x',labelsize=30)
     ax1.tick_params('y',labelsize=30)
     plt.ylabel('Returns (%)',fontsize=35)
-    plt.xlabel('Accuracy',fontsize=35)
-    plt.title('Blended Returns vs. Accuracy',fontsize=40,fontweight='bold')
+    plt.xlabel('Precision',fontsize=35)
+    plt.title('Blended Returns vs. Precision',fontsize=40,fontweight='bold')
     plt.savefig('images/returns_v_prec')
+    plt.show()
 
 
 
@@ -666,8 +667,11 @@ def plot_prec_by_prop(return_df):
     plt.legend(prop={'size':25})
     ax.tick_params('x',labelsize=25)
     ax.tick_params('y',labelsize=25)
-    plt.savefig('images/prec_v_prop.png')
+    plt.xlabel('Proportion')
+    plt.ylabel('Precision')
     plt.title('Precision vs. Proportion',fontsize=25,fontweight='bold')
+    plt.savefig('images/prec_prop.png')
+
     plt.show()
 
 def plot_36m_deployed(returns_df):
@@ -682,7 +686,7 @@ def plot_36m_deployed(returns_df):
     ax.tick_params('y',labelsize=25)
     plt.ylabel('Returns (%)',fontsize=25)
     plt.xlabel('Deployed Capital ($ in millions)',fontsize=25)
-    plt.title('36 Month Returns by Model',fontsize=35,fontweight='bold')
+    plt.title('36 Month Returns on Deployed Capital',fontsize=35,fontweight='bold')
     plt.savefig('images/returns_36m_deployed.png')
     plt.show()
 
@@ -698,7 +702,7 @@ def plot_60m_deployed(returns_df):
     ax.tick_params('y',labelsize=25)
     plt.ylabel('Returns (%)',fontsize=25)
     plt.xlabel('Deployed Capital ($ in millions)',fontsize=25)
-    plt.title('60 Month Returns by Model',fontsize=35,fontweight='bold')
+    plt.title('60 Month Returns on Deployed CApital',fontsize=35,fontweight='bold')
     plt.savefig('images/returns_60m_deployed.png')
     plt.show()
 
@@ -714,6 +718,58 @@ def profits_v_deployed(returns_df):
     plt.legend(prop={'size': 25})
     plt.ylabel('Profits ($ in millions)',fontsize=25)
     plt.xlabel('Deployed Capital ($ in millions)',fontsize=25)
-    plt.title('60 Month Returns by Model',fontsize=35,fontweight='bold')
+    plt.title('Profits By Model',fontsize=35,fontweight='bold')
     plt.savefig('images/profits_v_deployed.png')
+    plt.show()
+
+def get_list_vals(x):
+    arr = np.array([float(j) for j in x.strip('[]').split(',')])
+    return arr[~np.isnan(arr)]
+
+def plot_sharpe(df_original):
+    df = df_original
+    models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
+    colors = ['b','g','r']
+    df['Avg_Deployed_36'] = df['Deployed_Capital_36'].apply(lambda x: np.mean(x) /1000000)
+    df['Avg_Deployed_60'] = df['Deployed_Capital_60'].apply(lambda x: np.mean(x)/1000000)
+    df['Model'] = df['Model_list'].apply(lambda x: x.split('_')[0])
+    fig = plt.figure(figsize=(20,20))
+    ax1 = fig.add_subplot(2,2,1)
+    for m,c in zip(models,colors):
+        ax1.scatter(df[df['Model']==m]['Avg_Deployed_36'],df[df['Model']==m]['Sharpe_36'],c=c,label=m)
+    plt.title('Sharpe Ratio vs. 36 Month Deployed',fontsize=35)
+    ax1.tick_params('x',labelsize=25)
+    ax1.tick_params('y',labelsize=25)
+    plt.xlabel('Deployed Capital in Millions',fontsize=25)
+    plt.ylabel('Sharpe Ratio',fontsize=25)
+    plt.legend(prop={'size': 20})
+    ax2 = fig.add_subplot(2,2,2)
+    for m,c in zip(models,colors):
+        ax2.scatter(df[df['Model']==m]['Avg_Deployed_36'],df[df['Model']==m]['Sharpe_60'],c=c,label=m)
+    plt.title('Sharpe Ratio vs. 60 Month Deployed',fontsize=35)
+    ax2.tick_params('x',labelsize=25)
+    ax2.tick_params('y',labelsize=25)
+    plt.xlabel('Deployed Capital in Millions',fontsize=25)
+    plt.ylabel('Sharpe Ratio',fontsize=25)
+    plt.legend(prop={'size': 20})
+    ax3 = fig.add_subplot(2,2,3)
+    for m,c in zip(models,colors):
+        ax3.scatter(df[df['Model'] ==m]['Avg_Return_36'],df[df['Model']==m]['Sharpe_36'],c=c,label=m)
+    plt.title('Sharpe Ratio vs. 36 Month Returns',fontsize=35)
+    ax3.tick_params('x',labelsize=25)
+    ax3.tick_params('y',labelsize=25)
+    plt.xlabel('Returns',fontsize=25)
+    plt.ylabel('Sharpe Ratio',fontsize=25)
+    plt.legend(prop={'size': 20})
+    ax4 = fig.add_subplot(2,2,4)
+    for m,c in zip(models,colors):
+        ax4.scatter(df[df['Model'] ==m]['Avg_Return_60'],df[df['Model']==m]['Sharpe_60'],c=c,label=m)
+    plt.title('Sharpe Ratio vs. 60 Month Returns',fontsize=35)
+    ax4.tick_params('x',labelsize=25)
+    ax4.tick_params('y',labelsize=25)
+    plt.xlabel('Returns',fontsize=25)
+    plt.ylabel('Sharpe Ratio',fontsize=25)
+    plt.legend(prop={'size': 20})
+    plt.tight_layout()
+    plt.savefig('images/sharpe_plot.png')
     plt.show()

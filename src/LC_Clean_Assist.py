@@ -5,13 +5,14 @@ import numpy as np
 
 def clean_lc_for_plotting(df_original):
     """
-    Takes in original LC data and returns a cleaned DataFrame for plotting
+    Takes in the original Lending Club  data and returns a
+    cleaned DataFrame for plotting and early data exploration.
 
-    Params:
-    df_original (pd.DataFrame): lending club dataframe
+    Args:
+        df_original (pandas DataFrame): Lending Club dataframe containing loan data
 
-    Returns
-    df (pd.DataFrame)
+    Returns:
+        df (pandas DataFrame): Dataframe with columns cleaned for the LC_Plotter.py module
     """
     df = df_original.copy()
     df.drop(index = df[df['loan_amnt'].isnull()].index,inplace=True)
@@ -30,11 +31,11 @@ def clean_lc_for_models(df_original):
     Takes in the dataframe produced by clean_lc_for_plotting
     and returns a cleaned dataframe
 
-    Params:
-    df_original (pd.DataFrame): dataframe returned by the clean_lc_for_plotting function
+    Args:
+        df_original (pd.DataFrame): Dataframe returned by the clean_lc_for_plotting function
 
     Returns:
-    df (pd.DataFrame)
+        df (pd.DataFrame)
     """
     df = df_original[(df_original['loan_status']=='Fully Paid') | (df_original['loan_status']=='Charged Off')]
     drop_cols = ['acc_now_delinq','acc_open_past_24mths','bc_open_to_buy','bc_util',
@@ -102,79 +103,185 @@ def clean_lc_for_models(df_original):
     return df_final
 
 def clean_ij_pub_rec(row):
+    """
+    Function to be used within a .apply(lambda row: clean_ij_pub_rec(row))
+
+    Args:
+        row (pandas DataFrame row): Row within the initially cleaned data
+
+    Returns:
+        bad_num (float): Count of public record or otherwise negative credit related events.
+    """
     if row['application_type'] == 'Individual':
-        return row['pub_rec'] + row['chargeoff_within_12_mths'] + row['num_accts_ever_120_pd'] + row['num_tl_90g_dpd_24m']
+        bad_num =  row['pub_rec'] + row['chargeoff_within_12_mths'] + row['num_accts_ever_120_pd'] + row['num_tl_90g_dpd_24m']
+        return bad_num
     else:
-        return row['pub_rec'] + row['chargeoff_within_12_mths'] + row['num_accts_ever_120_pd'] + row['num_tl_90g_dpd_24m'] +row['sec_app_chargeoff_within_12_mths']
-
-
-
+        bad_num = row['pub_rec'] + row['chargeoff_within_12_mths'] + row['num_accts_ever_120_pd'] + row['num_tl_90g_dpd_24m'] +row['sec_app_chargeoff_within_12_mths']
+        return bad_num
 
 def clean_ij_fico(row):
+    """
+    Function to be used within a .apply(lambda row: clean_ij_pub_rec(row))
+
+    Args:
+        row (pandas DataFrame row): Row within the initially cleaned data
+
+    Returns:
+        fico (float): Average of different FICO measures.
+    """
     if row['application_type'] == 'Individual':
-        return (row['fico_range_low'] + row['fico_range_high']) / 2
+        fico =  (row['fico_range_low'] + row['fico_range_high']) / 2
     else:
-        return (row['fico_range_low'] + row['fico_range_high'] + row['sec_app_fico_range_low'] + row['sec_app_fico_range_high'])  /4
+        fico =  (row['fico_range_low'] + row['fico_range_high'] + row['sec_app_fico_range_low'] + row['sec_app_fico_range_high'])  /4
+    return fico
 
 def clean_ij_dti(row):
+    """
+    Function to be used within a .apply(lambda row: clean_ij_pub_rec(row))
+
+    Args:
+        row (pandas DataFrame row): Row within the initially cleaned data
+
+    Returns:
+        DTI (float): Debt to income ratio of borrower.
+    """
     if row['application_type'] == 'Individual':
-        return row['dti']
+        DTI =  row['dti']
     else:
-        return row['dti_joint']
+        DTI =  row['dti_joint']
+    return DTI
 
 def clean_ij_inc(row):
+    """
+    Function to be used within a .apply(lambda row: clean_ij_pub_rec(row))
+
+    Args:
+        row (pandas DataFrame row): Row within the initially cleaned data
+
+    Returns:
+        income (float): Income of borrower.
+    """
     if row['application_type'] == 'Individual':
-        return row['annual_inc']
+        income = row['annual_inc']
     else:
-        return row['annual_inc_joint']
+        income =  row['annual_inc_joint']
+    return income
 
 def clean_ij_mort(row):
+    """
+    Function to be used within a .apply(lambda row: clean_ij_pub_rec(row))
+
+    Args:
+        row (pandas DataFrame row): Row within the initially cleaned data
+
+    Returns:
+        mort_acc (float): Count of mortgage accounts.
+    """
     if row['application_type'] == 'Individual':
-        return row['mort_acc']
+        mort_acc =  row['mort_acc']
     else:
-        return (row['mort_acc'] + row['sec_app_mort_acc']) / 2
+        mort_acc =  (row['mort_acc'] + row['sec_app_mort_acc']) / 2
+    return mort_acc
+
 def clean_ij_ver_stat(row):
+    """
+    Function to be used within a .apply(lambda row: clean_ij_pub_rec(row))
+
+    Args:
+        row (pandas DataFrame row): Row within the initially cleaned data
+
+    Returns:
+        status (string): Description of the verification status of an applicant.
+    """
     if row['application_type'] == 'Individual':
-        return row['verification_status']
+        status =  row['verification_status']
     else:
         if (row['verification_status'] == 'Not Verified') or (row['verification_status_joint'] == 'Not Verified'):
-            return 'Not Verified'
+            status =  'Not Verified'
         elif (row['verification_status'] == 'Verified') and (row['verification_status_joint'] == 'Verified'):
-            return 'Verified'
+            status =  'Verified'
         else:
-            return 'Source Verified'
+            status =  'Source Verified'
+    return status
+
 def clean_ij_open_acc(row):
+    """
+    Function to be used within a .apply(lambda row: clean_ij_pub_rec(row))
+
+    Args:
+        row (pandas DataFrame row): Row within the initially cleaned data
+
+    Returns:
+        open_acc (float): Count of open accounts.
+    """
     if row['application_type'] == 'Individual':
-        return row['open_acc']
+        open_acc =  row['open_acc']
     else:
-        return (row['open_acc'] + row['sec_app_open_acc'])/2
+        open_acc =  (row['open_acc'] + row['sec_app_open_acc'])/2
+    return open_acc
+
 def clean_ij_revol(row):
+    """
+    Function to be used within a .apply(lambda row: clean_ij_pub_rec(row))
+
+    Args:
+        row (pandas DataFrame row): Row within the initially cleaned data
+
+    Returns:
+        revol (float): Revolving balance.
+    """
     if row['application_type'] == 'Individual':
-        return row['revol_bal']
+        revol =  row['revol_bal']
     else:
-        return row['revol_bal_joint']
-
-
-
-
-
+        revol =  row['revol_bal_joint']
+    return revol
 
 
 
 def clean_up_status(x):
+    """
+    Function that cleans up the status string of loans that include "Does not comply"
+
+    Args:
+        x (string): Loan status
+
+    Returns:
+        stat (string): Cleaned up loan status string
+    """
     if str(x)[:4] == 'Does':
-        return str(x).split(':')[-1]
+        stat =  str(x).split(':')[-1]
     else:
-        return x
+         stat = x
+    return stat
 
 def get_charge_off(row):
+    """
+    Function that takes in pandas dataframe row.
+
+    Args:
+        row (pandas DataFrame): row of the Lending Club DataFrame
+
+    Returns:
+        num (float): dollar amount that charged-off
+    """
     if row['loan_status'] == 'Charged Off':
-        return  row['loan_amnt'] - row['total_rec_prncp']
+        num =  row['loan_amnt'] - row['total_rec_prncp']
     else:
-        return 0
+        num =  0
+    return num
 
 def clean_emp_length(x):
+    """
+    Function that cleans the employment length column.
+
+    Args:
+        x (string): string that describes the employment length of borrower.
+
+    Returns:
+        detail (int): Years borrower has worked at current job.
+    """
     if str(x) == 'nan':
-        return 0
+        detail =  0
     else:
-        return int(str(x).strip(' +< years'))
+        detail =  int(str(x).strip(' +< years'))
+    return detail

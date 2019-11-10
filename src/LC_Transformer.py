@@ -4,6 +4,17 @@ import pandas as pd
 from sklearn.decomposition import PCA, NMF
 
 def lc_transform(df_original):
+    """
+    Function that takes the cleaned Lending Club DataFrame and transforms it into a
+    scaled dataframe.
+
+    Args:
+        df_original (pandas DataFrame): pandas DataFrame of the cleaned Lending Club Data
+
+    Returns:
+        scaled_df (pandas DataFrame): pandas DataFrame with transformed data columns including one
+                                      hot encoding and standarding the data.
+    """
     df = df_original.copy()
     num_features = ['issue_d_year','funded_amnt','int_rate','installment',
     'FICO','DTI','annual_income','emp_length',
@@ -27,43 +38,25 @@ def lc_transform(df_original):
     scaled_df = pd.concat([test_num,test_cat,output],axis=1)
     return scaled_df
 
-def lc_stratified_train_test_split(data,data_x, data_y, state=101, size = 0.2, splits=1):
-    split = StratifiedShuffleSplit(n_splits=splits,test_size=size,random_state=state)
-    for i, j in split.split(data_x,data_y):
-        strat_train_set = data.iloc[i]
-        strat_test_set = data.iloc[j]
+def lc_balance_sets(scaled_df,proportion = 1.0):
+    """
+    Function that takes in a dataframe and prepares a train-test-split
+    with a specified proportion of the majority class to the minority class.
 
-    return strat_train_set, strat_test_set
+    Args:
+        scaled_df (pandas DataFrame): DataFrame outputted from the lc_transform function.
+        proportion (float): proportion of the majority class to the minority class.
 
-def lc_create_sets(scaled_df):
-    x_cols = list(scaled_df.columns)
-    x_cols.remove('loan_status')
-    x_cols.remove('loan_amount')
-    x_cols.remove('loan_payoff')
-    strat_train, strat_valid = lc_stratified_train_test_split(scaled_df,scaled_df[x_cols],scaled_df['loan_status'])
-    strat_train, strat_test = lc_stratified_train_test_split(strat_train,strat_train[x_cols],strat_train['loan_status'])
-    return strat_train, strat_test, strat_valid, x_cols
-
-def lc_organize(scaled_df):
-    strat_train, strat_test, strat_valid, x_cols = lc_create_sets(scaled_df)
-    strat_train_x = strat_train[x_cols]
-    strat_train_y = strat_train['loan_status']
-    strat_train_extra = strat_train[['loan_amount','loan_payoff']]
-    strat_test_x = strat_test[x_cols]
-    strat_test_y = strat_test['loan_status']
-    strat_test_extra = strat_test[['loan_amount','loan_payoff']]
-    strat_valid_x = strat_valid[x_cols]
-    strat_valid_y = strat_valid['loan_status']
-    strat_valid_extra = strat_valid[['loan_amount','loan_payoff']]
-    return strat_train_x, strat_train_y, strat_train_extra, strat_test_x, strat_test_y, strat_test_extra, strat_valid_x,strat_valid_y, strat_valid_extra
-
-
-def lc_balance_sets(scaled_df,proportion = 1):
-    X_train, X_test, y_train, y_test = train_test_split(scaled_df.iloc[:,:-1], scaled_df.iloc[:,-1], test_size=0.1, random_state=42)
+    Returns:
+        X_train (pandas DataFrame): X training data
+        y_train (pandas DataFrame): y training data
+        X_test (pandas DataFrame): X test data
+        y_test (pandas DataFrame): y test data
+        train_loan_data (pandas DataFrame): training loan data including loan length, loan amount, and loan payoff.
+        test_loan_data (pandas DataFrame): test loan data including loan length, loan amount, and loan payoff.
+    """
+    X_train, X_test, y_train, y_test = train_test_split(scaled_df.iloc[:,:-1], scaled_df.iloc[:,-1], test_size=0.1)
     train_set = pd.concat([X_train,y_train],axis=1)
-
-
-
     class_0 = train_set[train_set['loan_status'] == 0]
     size = int(proportion * class_0.shape[0])
     class_1 = train_set[train_set['loan_status'] == 1].iloc[:size,:]
@@ -77,6 +70,16 @@ def lc_balance_sets(scaled_df,proportion = 1):
     return X_train, X_test, y_train, y_test, train_loan_data, test_loan_data
 
 def get_pca_df(scaled_df,n_comp):
+    """
+    Takes in a scaled dataframe and computes the PCA eigenmatrix.
+
+    Args:
+        scaled_df (pandas dataframe): dataframe with scaled data
+        n_comp (int): numer of components (eigenvectors)
+
+    Returns:
+        pac_df (pandas dataframe): eigenmatrix
+    """
     pca = PCA(n_components=n_comp)
     principalComponents = pca.fit_transform(scaled_df.iloc[:,:-4])
     principalDf = pd.DataFrame(data = principalComponents
@@ -85,7 +88,18 @@ def get_pca_df(scaled_df,n_comp):
     return pca_df
 
 
-def get_sharpe_models(combined):
+def get_compiled_models(combined):
+    """
+    Obtains the models and model data with the highest blended returns, 36 month returns or 60 month returns.
+
+    Args:
+        combined (pandas DataFrame): dataframe combined from concatentating several output dataframes from the
+                                    lc_proportion_grid_search function in the LC_Models.py module.
+
+    Returns:
+        compiled (pandas DataFrame): dataframe containing 9 models selected based on scoring the best returns across several
+                                     criteria.
+    """
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     for i in models:
         df = combined[combined['model'] ==i]
@@ -100,4 +114,5 @@ def get_sharpe_models(combined):
             rfc_df = pd.concat([idx_df,p_df],axis=1)
         else:
             gbc_df = pd.concat([idx_df,p_df],axis=1)
-    return pd.concat([log_df,rfc_df,gbc_df])
+    compiled = pd.concat([log_df,rfc_df,gbc_df])
+    return compiled

@@ -1,21 +1,19 @@
-# Lending Club Loan Analysis
+# Lending Club Loan Prediction
 
 ## Overview
 
-Lending Club is a peer-to-peer lending company founded in 2007 by John Donovan and Renaud Laplanche. The Lending Club platform allows borrowers to create unsecured personal loans between $1,000 and $40,000. Investors earn money by selecting loans to fund and Lending Club earns money by charging borrowers an origination fee and investors a service fee. From Q2'2007 - Q2'2019, the Lending Club platform originated ~ $38.1 billion in loans, most recently originating ~ $2.2B in Q2'19.
+Lending Club is a peer-to-peer lending company founded in 2007 by John Donovan and Renaud Laplanche. The Lending Club platform allows borrowers to create unsecured personal loans between $1,000 and $40,000. Investors earn money by selecting loans to fund and Lending Club earns money by charging borrowers an origination fee and investors a service fee. From Q2'2007 - Q2'2019, the Lending Club platform originated ~ $38.1 billion in loans and most recently originated ~ $2.2B in Q2'19.
 
 ## Motivation
 
 
-Consumers and investors alike have faced the issue of how to optimize their investment portfolio or how to earn a return on excess cash.  Traditional portfolio management and investment selection is time consuming and complex, leading to the rise of passively managed investment funds for consumers. However, most funds offer standard equity / bond splits with minimal alternative asset selection. Bond investment has also been increasingly tough given the lower rates set by the Federal Reserve and observed in the Treasury Bond yields below:
+Consumers and investors alike have faced the issue of how to optimize their investment portfolio or how to earn a return on excess cash.  Traditional portfolio management and investment selection is time consuming and complex, leading to the rise of passively managed investment funds for consumers. However, most funds offer standard equity / bond splits with minimal alternative asset selection. Bond investment has also been increasingly tough given the lower rates set by the Federal Reserve and observed in the Treasury Bond yields below. Lending Club's loan platform and open data sets offer us the opportunity to make use of predictive models to attempt to generate higher yield on an alternative asset class.
 
 <img src="./images/yield.png"/>
-<br><br>
-Lending Club's loan platform and open data sets offer us the opportunity to make use of predictive models to attempt to generate higher yield on an alternative asset class.
 
 ## Data
 
-Lending Club has made their data public [here](https://help.lendingclub.com/hc/en-us/articles/216127307-Data-Dictionaries). The dataset spans ~ 2.5 million loans across 150 features and includes a data dictionary to refer to each term.
+Lending Club has made their data public [here](https://help.lendingclub.com/hc/en-us/articles/216127307-Data-Dictionaries). The dataset spans ~ 2.5 million loans across 150 features and includes a data dictionary to refer to each term. The data includes features that are observed at the time of loan origination as well as features created based on loan's evolution over time with respect to the status of the loan.
 
 ## A First Look
 
@@ -42,7 +40,7 @@ Post-IPO, Lending CLub's strongest month was Mar'16 when it originated $949.4M i
 
 #### Understanding the Loan Mix
 
-The loans on Lending Club are classified in 5 categories: Fully Paid, Current, Charged Off, Late (31-120 days), In Grace Period, Late (16-30 days), Does not meet the credit policy. Status:Fully Paid, Does not meet the credit policy. Status:Charged Off, Default. Below, we have grouped up the loan categories including late, in grace period and in default to show overall, what the Lending Club loan platform has originated.
+The loans on Lending Club are classified in 9 categories: Fully Paid, Current, Charged Off, Late (31-120 days), In Grace Period, Late (16-30 days), Does not meet the credit policy. Status:Fully Paid, Does not meet the credit policy. Status:Charged Off, Default. Below, we have grouped up the loan categories including late, in grace period and in default to show overall, what the Lending Club loan platform has originated.
 
 <p align="left">
 <img src="./images/lc_loan_status.png" width = 7500 />
@@ -75,7 +73,7 @@ Additionally, we can observe the relative proportion of fully-paid loans to char
 
 <img src="./images/loan_outcome_proportions.png"/>
 <br><br>
-We can see that the proportion of good loans on the platform has mostly increased over time, currently settling at ~92%. Applying this information to predictive analytics, we can see that simply picking every loan would lead to a high accuracy metric but we want to also avoid the troubled loans, leading to the idea that precision is a better metric to score our models.
+We can see that the proportion of good loans on the platform has mostly increased over time, currently settling at ~92%. Applying this information to predictive analytics, we can see that simply picking every loan would lead to a high accuracy metric but we want to also avoid the troubled loans, las charge-offs will impair the return percentages of our predictions.
 
 #### Geographies
 
@@ -97,7 +95,7 @@ The two plots confirm what may have already been suspected. The largest loan vol
 |TX| $15.9K|
 
 </p>
-Which are considerably less than AK, with an avg loan size of $17.4K.
+This is considerably less than Arkansas which ha an avg loan size of $17.4K.
 
 #### Individuals
 
@@ -168,7 +166,7 @@ The initial cleaned data set yielded the following features:
 -  Home ownership: (Categorical) Indicates whether a borrower owns a home, is paying off a mortgage, rents or has some other living situation
 -  Address state: (Categorical) Indicates state the borrower is applying from
 -  Earliest credit line: (Numerical) The earliest year the borrower had a credit line
--  Negative activity: (Numerical) Combination of counts of public record bankruptics and other credit adverse events
+-  Negative activity: (Numerical) Combination of counts of public record bankruptcies and other credit adverse events
 -  Inquiries within the last 6 months: (Numerical) Count of times borrower's credit report was inquired upon within the last 6 months
 -  Delinquencies within the last 6 months: (Numerical) Count of delinquencies within the last 6 months
 -  Verified: (Categorical) Indicates whether the borrower's credit information was Verified, Source Verified, or Not Verified
@@ -206,16 +204,48 @@ We choose the following models to perform a grid search for to tune parameters t
 Additionally, because there are two types of loan maturities (36 month term and 60 month term), we can evaluate the returns on either class that our predictive models generate:
 
 <img src="images/returns_36m.png"/>
-<img src="images/returns_60m.png"/>
+<img src="./images/returns_60m.png"/>
 <br><br>
-We can see that the models produce the highest returns at a proportion of ~0.1 : 1 of the majority class to the minority class. Additionally, we observe that increasing the proportion of the majority to the minority class to  1:1 (50-50 split) causes the returns generated by the models to decrease and converge to ~6.0% in the case of 36 month term loans and to ~6.8% in the case of 60 month term loans.
 
+We see that the consistently across all models, we experience the highest returns when the proportion of the majority class to the minority class is very low. Specifically, we see this occur in the interval [0.01,0.2]. As we increase the proportion towards a 1:1 split, we see returns converge towards ~6.0% in the case of 36 month term loans and to ~6.8% in the case of 60 month term loans. Also of interest, we see that the GradientBoostingClassifier is clearly the best model at very high and very low proportions. In the range [0.1,0.5], the RandomForestClassifier performs the best. Also, the GradientBoostingClassifier performs extremely well at low levels, posting returns of ~20.0% on its 36 month loans and achieves 36.0% on one proportion for its 5 year loans. Because LendingClub does not offer rates this high, we suspect these outsized returns occurred because a charged-off loan had a high recovery amount, boosting returns.
+
+Next, we see how much capital is being deployed at each proportion. Combining this with our knowledge of the returns earned at each proportion, we find that the outsized returns occur when the deployed capital is the lowest. This presents an interesting divergence in how we can evaluate our models. On the one hand, a retail investor would like to earn maximum returns and likely would not be deploying large capital amounts and so would prefer the best performing models from the lower proportions. An institutional investor would likely prefer stable returns and may see the volatility in returns at the lower proportions less attractive than the stable convergence of returns in the higher returns which would coincide with very high investment amounts.
+
+<img src="images/returns_36m_deployed.png"/>
+<img src="images/returns_60m_deployed.png"/>
+<br><br>
 Combining the two sets of returns generated by the algorithms, we can view the blended returns and see how this fluctuates with regards to different scoring metrics. In investing, avoiding bad investments is a large aspect of protecting capital to eventually capture returns from performing assets. Below we see how the blended returns change with regards to accuracy and precision.
-
-<img src="./images/rets_scoring_metrics.png"/>
+<br><br>
+<img src="./images/returns_v_acc.png"/>
+<img src="images/returns_v_prec.png"/>
 <br><br>
 We can see that we experience the highest returns when accuracy is low and precision is high. This makes sense because we are lowering accuracy in order to make sure that we only pick good loans. We can then view how to maximize precision based on proportion to get a better idea of which proportion of the majority / minority class to choose.
-
-<img src = "./images/prec_v_prop.png"/>
 <br><br>
-We see that at low proportions, both classifiers have a higher precision which tapers off as we increase the proportion. The logistic regression model is consistently scoring precision along a linear path whereas the Random Forest model has some jumps to 0.0 in the early stages. This is consistent with the returns data observed because the Random Forest Classifier produces large returns in the beginning based on picking 2-3 loans. In the case in which it picks 1 loan and turns out to be wrong, we witness the dropoff to 0.0 for the precision as well as the jump to returns of ~2.0%, ~4.0, and ~5.0%. From this plot and the returns, we can see that at lower levels the Logistic Regression model is more consistent at producing high returns at low proportions but the Random Forest Classifier will produce the higher returns of the two models. At higher proportions, the two either perform roughly the same except in the 36 month loan return plot. In the 60 month return plot, returns decrease as proportions go up and the Random Forest model outperforms the Logistic Regression model for all proportions < 0.7.
+<img src="images/prec_prop.png"/>
+<br><br>
+We see that at low proportions, all classifiers have a higher precision which drops off linearly as we increase the proportion. The logistic regression model is consistently scoring precision along a linear path whereas the Random Forest and GradientBoosting models have some jumps to 0.0 in the early stages. This is consistent with the returns data observed because the Random Forest and Gradient Boosting models  produce large returns in the beginning based on picking 2-3 loans. In the case in which it picks 1 loan and turns out to be wrong, we witness the dropoff to 0.0 for the precision as well as the jumps in returns.
+<br><br>
+
+## Sharpe Ratio
+
+To fine tune our models further, we can perform the following:
+-  Pick the 3 best models in each model category based on blended returns, 36 month returns and 60 month returns
+-  Pick 3 random models with larger proportions
+-  For each model (total of 18), run the model 50 times using the gridsearch parameters and train-test split proportion.
+-  Calculate the Sharpe Ratio for each category.  
+
+This strategy will allow us to observe the robustness of each model's returns. If there is an element of randomness that caused a model to perform extremely well, performing the train-test split 50 times will help reduce that element. By calculating the Sharpe Ratio, we are applying scores that reward models that produce consistently high returns with minimal variance.
+
+After performing this, we observe the following:
+
+<img src="images/sharpe_plot.png"/>
+
+Based on this chart, we can pick the two models to create a final prediction system by taking the top Sharpe scores for both the 36 month and 60 month loan groups.
+
+|Term |Model |Sharpe Ratio | Proportions | Parameters |
+|---------------------------------------|
+|36 Months| Logistic Regression | 13.0 (36 Month)| 0.085| Params: |
+|60 Months| RandomForestClassifier | 6.5 (60 Month) | 0.09| Params: |
+
+Based on this, we can use the Logistic Regression model when we encounter a 36 month term loan and the RandomForestClassifier for 60 month term loans.
+Additionally we will run this 100 times to test the robustness of the system and end up producing the following:
