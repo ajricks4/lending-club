@@ -242,10 +242,40 @@ After performing this, we observe the following:
 
 Based on this chart, we can pick the two models to create a final prediction system by taking the top Sharpe scores for both the 36 month and 60 month loan groups.
 
-|Term |Model |Sharpe Ratio | Proportions | Parameters |
-|---------------------------------------|
+|Term | Model | Sharpe Ratio | Proportions | Parameters |
+|-----------------------------------------------------|
 |36 Months| Logistic Regression | 13.0 (36 Month)| 0.085| Params: |
 |60 Months| RandomForestClassifier | 6.5 (60 Month) | 0.09| Params: |
 
 Based on this, we can use the Logistic Regression model when we encounter a 36 month term loan and the RandomForestClassifier for 60 month term loans.
-Additionally we will run this 100 times to test the robustness of the system and end up producing the following:
+Additionally we will run this 1000 times to test the robustness of the system and end up producing the following:
+
+<img src="images/system_returns_distributions.png"/>
+<br>
+<img src= "images/system_returns_vs_deployed.png"/>
+
+We see here that the system does a strong job and produces:
+
+-  Blended Returns
+  -  Mean: 16.80%
+  -  Min: 16.69%
+  -  Max: 16.91%
+-  36 Month Loan Returns:
+  -  Mean: 13.65%
+  -  Min: 13.57%
+  -  Max: 13.74:
+-  60 Month Loan Returns:
+  -  Mean: 24.17%
+  -  Min: 23.88%
+  -  Max: 24.48%
+
+Deployed Capital:
+-  Deployed Mean: $1.78 Billion
+-  36 Month Deployed Mean: $1.25 Billion
+-  60 Month Deployed Mean: $0.53 Billion
+
+## Conclusion:
+
+To bring this information full-circle, we were exploring ways to boost returns as opposed to bonds. Lending Club loans offer similar maturity lengths to risk free treasury bonds and better returns but have a higher risk potentiality. By applying machine learning techniques and domain expertise, we were able to produce methods to predict and then analyze the investment applications. Using returns and the Sharpe Ratio we were then able to create a hybrid model which performed far better than any of our previous models. Additionally, the system deployed significant amounts of capital meaning that the algorithm can be used by both retail and institutional investors.
+
+The significance of this is that investors can swap out portions of their bond portfolio with Lending Club loans and expect higher returns by simply deploying this model.  
