@@ -207,6 +207,16 @@ Additionally, because there are two types of loan maturities (36 month term and 
 <img src="./images/returns_60m.png"/>
 <br><br>
 
+Best Models:
+|Term|Model|Model|Returns|Deployed Capital|Proportion|
+|-------------|
+|36|GradientBoostingClassifier|20.22%|24800.00|0.045|
+|36|GradientBoostingClassifier|20.22%|24800.00|0.040|
+|36|GradientBoostingClassifier|20.22%|24800.00|0.035|
+|60|GradientBoostingClassifier|36.15%|23125.00|0.055|
+|60|RandomForestClassifier|21.92%|40000.00|0.130|
+|60|RandomForestClassifier|21.92%|40000.00|0.170|
+
 We see that the consistently across all models, we experience the highest returns when the proportion of the majority class to the minority class is very low. Specifically, we see this occur in the interval [0.01,0.2]. As we increase the proportion towards a 1:1 split, we see returns converge towards ~6.0% in the case of 36 month term loans and to ~6.8% in the case of 60 month term loans. Also of interest, we see that the GradientBoostingClassifier is clearly the best model at very high and very low proportions. In the range [0.1,0.5], the RandomForestClassifier performs the best. Also, the GradientBoostingClassifier performs extremely well at low levels, posting returns of ~20.0% on its 36 month loans and achieves 36.0% on one proportion for its 5 year loans. Because LendingClub does not offer rates this high, we suspect these outsized returns occurred because a charged-off loan had a high recovery amount, boosting returns.
 
 Next, we see how much capital is being deployed at each proportion. Combining this with our knowledge of the returns earned at each proportion, we find that the outsized returns occur when the deployed capital is the lowest. This presents an interesting divergence in how we can evaluate our models. On the one hand, a retail investor would like to earn maximum returns and likely would not be deploying large capital amounts and so would prefer the best performing models from the lower proportions. An institutional investor would likely prefer stable returns and may see the volatility in returns at the lower proportions less attractive than the stable convergence of returns in the higher returns which would coincide with very high investment amounts.
@@ -244,8 +254,8 @@ Based on this chart, we can pick the two models to create a final prediction sys
 
 |Term | Model | Sharpe Ratio | Proportions | Parameters |
 |-----------------------------------------------------|
-|36 Months| Logistic Regression | 13.0 (36 Month)| 0.085| Params: |
-|60 Months| RandomForestClassifier | 6.5 (60 Month) | 0.09| Params: |
+|36 Months| Logistic Regression | 13.0 (36 Month)| 0.085| Params: {'max_depth': 8, 'max_features': 'sqrt', 'min_samples_leaf': 2, 'min_samples_split': 5, 'n_estimators': 50}|
+|60 Months| RandomForestClassifier | 6.5 (60 Month) | 0.09| Params: {'C': 0.05, 'penalty': 'l1'}|
 
 Based on this, we can use the Logistic Regression model when we encounter a 36 month term loan and the RandomForestClassifier for 60 month term loans.
 Additionally we will run this 1000 times to test the robustness of the system and end up producing the following:
