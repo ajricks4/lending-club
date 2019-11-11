@@ -208,6 +208,7 @@ Additionally, because there are two types of loan maturities (36 month term and 
 <br><br>
 
 Best Models:
+
 |Term|Model|Returns|Deployed Capital|Proportion|
 |----|-----|-------|----------------|-----------|
 |36|GradientBoostingClassifier|20.22%|24800.00|0.045|
@@ -253,9 +254,9 @@ After performing this, we observe the following:
 Based on this chart, we can pick the two models to create a final prediction system by taking the top Sharpe scores for both the 36 month and 60 month loan groups.
 
 |Term | Model | Sharpe Ratio | Proportions | Parameters |
-|-----------------------------------------------------|
-|36 Months| Logistic Regression | 13.0 (36 Month)| 0.085| Params: {'max_depth': 8, 'max_features': 'sqrt', 'min_samples_leaf': 2, 'min_samples_split': 5, 'n_estimators': 50}|
-|60 Months| RandomForestClassifier | 6.5 (60 Month) | 0.09| Params: {'C': 0.05, 'penalty': 'l1'}|
+|-----|-------|--------------|-------------|----------|
+|36 Months| Logistic Regression | 13.0 (36 Month)| 0.085| 'max_depth': 8 , 'max_features': 'sqrt' , 'min_samples_leaf': 2 , 'min_samples_split': 5 , 'n_estimators': 50|
+|60 Months| RandomForestClassifier | 6.5 (60 Month) | 0.09| 'C': 0.05 , 'penalty': 'l1'|
 
 Based on this, we can use the Logistic Regression model when we encounter a 36 month term loan and the RandomForestClassifier for 60 month term loans.
 Additionally we will run this 1000 times to test the robustness of the system and end up producing the following:
