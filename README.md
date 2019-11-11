@@ -280,10 +280,10 @@ We see here that the system does a strong job and produces:
   -  Min: 23.88%
   -  Max: 24.48%
 
-Deployed Capital:
--  Deployed Mean: $1.78 Billion
--  36 Month Deployed Mean: $1.25 Billion
--  60 Month Deployed Mean: $0.53 Billion
+-  Deployed Capital:
+  -  Deployed Mean: $1.78 Billion
+  -  36 Month Deployed Mean: $1.25 Billion
+  -  60 Month Deployed Mean: $0.53 Billion
 
 ## Conclusion:
 
