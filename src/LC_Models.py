@@ -34,6 +34,25 @@ import ast
 
 
 def lc_evaluate_model(y_true,y_preds,df_extra):
+    """
+    Evaluates a model by comparing the model's predictions to the actual loan outcomes and calculating the returns.
+
+    Args:
+        y_true (pandas Series): actual loan outcomes.
+        y_preds (pandas Series): predicted loan outcomes.
+        df_extra (pandas dataframe): dataframe including the loan term, loan amount and loan payoff.
+
+    Returns:
+        overall_return (float): Overall Return percentage
+        deployed_capital (float): Dollar amount invested in loans.
+        returned_capital (float): Returned Capital.
+        t_36_rets (float): Return percentage on 36 month term loans.
+        t_36_deployed (float): Capital invested in 36 month term loans
+        t_36_pl (float): Profit on 36 month term loans.
+        t_60_rets (float): Return percentage on 60 month term loans.
+        t_60_deployed (float): Capital invested in 60 month term loans.
+        t_60_pl (float): Profit on 60 month term loans.
+    """
     predictions = pd.DataFrame({'y_preds':y_preds,'y_true':y_true})
     evals = pd.concat([df_extra,predictions],axis=1)
     evals['investments'] = round(evals['y_preds'] * evals['loan_amount'],3)
@@ -53,6 +72,17 @@ def lc_evaluate_model(y_true,y_preds,df_extra):
 
 
 def lc_proportion_grid_search(scaled_df,grid_model,rang=list(np.arange(0.025,0.51,0.025))):
+    """
+    Performs a gridsearch on each proportion of the majority : minority class specified in the rang variable.
+
+    Args:
+        scaled_df (pandas dataframe):
+        grid_model (sklearn model):
+        rang (list):
+
+    Returns:
+        data_table (pandas dataframe): DataFrame with detailed information on the gridsearch at each proportion.
+    """
     model = grid_model
     model_df = scaled_df
     accs = []
@@ -105,33 +135,24 @@ def lc_proportion_grid_search(scaled_df,grid_model,rang=list(np.arange(0.025,0.5
         t_60_deployed_capital.append(t_60_deployed)
         t_60_returned_capital.append(t_60_pl)
         profits.append(profit)
-    return pd.DataFrame({'Proportions':props,'Returns':rets,'Profits':profits,'Accuracy':accs,'Precision':precs,'Best_Params':optimized_parameters,'Deployed_Capital':deployed,'Returned_Capital':returned,'36 Month Returns':t_36_returns,'36 Month Deployed Capital':t_36_deployed_capital,'36 Month Returned Capital':t_36_returned_capital,'60 Month Returns':t_60_returns,'60 Month Deployed Capital':t_60_deployed_capital,'60 Month Returned Capital':t_60_returned_capital })
-
-def lc_score(y_true,y_preds,test_loan_data):
-    print(confusion_matrix(y_true,y_preds))
-    prec = precision_score(y_true,y_preds)
-    acc = accuracy_score(y_true,y_preds)
-    overall_return, deployed_capital, returned_capital, t_36_rets,t_36_deployed,t_36_pl,t_60_rets,t_60_deployed,t_60_pl = lc_evaluate_model(y_true,y_preds, test_loan_data)
-    print('\n')
-    print('{}: {}'.format('accuracy',acc))
-    print('{}: {}'.format('precision',prec))
-    print('Return: {}'.format(overall_return))
-    return acc,prec,overall_return
-
-
-def lc_predict_probas_evaluator(model, X_test, y_test,loan_test_data):
-    probs_class_1 = list(model.predict_proba(X_test)[:,1])
-    predictions = pd.DataFrame({'Class1':probs_class_1,'y_true':y_test})
-    evals = pd.concat([loan_test_data,predictions],axis=1)
-    rets = []
-    for i in list(np.linspace(0.1,0.7,100)):
-        evals['threshold_'+str(i)] = evals['Class1'].apply(lambda x: 1 if x > i else 0)
-        ret = (np.sum(evals['threshold_'+str(i)] * evals['loan_payoff']) / np.sum((evals['loan_amount'] * evals['threshold_'+str(i)])) - 1)
-        rets.append(round(ret,3))
-    return list(np.linspace(0.1,0.7,100)),rets
-
+    data_table =  pd.DataFrame({'Proportions':props,'Returns':rets,'Profits':profits,'Accuracy':accs,'Precision':precs,'Best_Params':optimized_parameters,'Deployed_Capital':deployed,'Returned_Capital':returned,'36 Month Returns':t_36_returns,'36 Month Deployed Capital':t_36_deployed_capital,'36 Month Returned Capital':t_36_returned_capital,'60 Month Returns':t_60_returns,'60 Month Deployed Capital':t_60_deployed_capital,'60 Month Returned Capital':t_60_returned_capital })
+    return data_table
 
 def calculate_sharpe_ratios(pca_df,sharpe_matrix,rfo=0.0,rf36 = 0.0,rf60=0.0):
+    """
+    Calculates the data necessary to compute the sharpe ratios by re-running a gridsearched model 50 times to obtain
+    the robustness of the model's predictive ability.
+
+    Args:
+        pca_df (pandas DataFrame): dataframe obtained from cleaning, scaling and applying PCA to the Lending Club dataset.
+        sharpe_matrix (pandas DataFrame): dataframe containing the best models to obtain the sharpe ratios for.
+        rfo (float): risk free return.
+        rf36 (float): risk free return on 36 month assets.
+        rf60 (float): risk free return on 60 month assets.
+
+    Returns:
+        pd.DataFrame(dat) (pandas dataframe): dataframe with data necessary to calculate Sharpe ratios.
+    """
     df = sharpe_matrix
     model_list = []
     params = []
@@ -187,6 +208,20 @@ def calculate_sharpe_ratios(pca_df,sharpe_matrix,rfo=0.0,rf36 = 0.0,rf60=0.0):
     return pd.DataFrame(dat)
 
 def sharpe_models_large_p(pca_df,combined_df,rfo=0.0,rf36 = 0.0,rf60=0.0):
+    """
+    Calculates the data necessary to compute the sharpe ratios by re-running a gridsearched model 50 times to obtain
+    the robustness of the model's predictive ability.
+
+    Args:
+        pca_df (pandas DataFrame): dataframe obtained from cleaning, scaling and applying PCA to the Lending Club dataset.
+        combined_df (pandas DataFrame): dataframe containing all models that the grid search ran on.
+        rfo (float): risk free return.
+        rf36 (float): risk free return on 36 month assets.
+        rf60 (float): risk free return on 60 month assets.
+
+    Returns:
+        pd.DataFrame(dat) (pandas dataframe): dataframe with data necessary to calculate Sharpe ratios.
+    """
     mods = ['LogisticRegression']*3 + ['RandomForestClassifier']*3 + ['GradientBoostingClassifier']*3
     rands = []
     props = []
@@ -253,11 +288,31 @@ def sharpe_models_large_p(pca_df,combined_df,rfo=0.0,rf36 = 0.0,rf60=0.0):
 
 
 def str_list_to_list(x):
+    """
+    Converts json string containing list to list.
+
+    Args:
+        x (string): json string.
+
+    Returns:
+        arr (numpy array): array of original values.
+    """
     k = [float(j) for j in x.strip('[]').split(',')]
     arr = np.array(k)
-    return arr[(~np.isnan(arr)) & (arr != 0 )]
+    arr =  arr[(~np.isnan(arr)) & (arr != 0 )]
+    return arr
 
 def sharpe_calc(rets,rf):
+    """
+    Calculates the sharpe ratio.
+
+    Args:
+        rets (arr): array with returns data
+        rf (float): risk free asset return.
+
+    Returns:
+        sharpe ratio (float): sharpe ratio defined as (mean(returns) - risk_free_return) / standard_deviation(returns)
+    """
     if len(rets) == 0:
         return 0
     else:
@@ -265,6 +320,15 @@ def sharpe_calc(rets,rf):
 
 
 def sharpe_calc_df(df_orig):
+    """
+    Modifies the dataframe to clean up the sharpe matrix data to workable data as well as compute Sharpe Ratios.
+
+    Args:
+        df_orig (pandas DataFrame): DataFrame produced from running either the calculate_sharpe_ratios or sharpe_models_large_p functions.
+
+    Returns:
+        df (pandas DataFrame):
+    """
     df = df_orig
     df['Return_List'] = df['Return_List'].apply(lambda x: str_list_to_list(x))
     df['Return36_List'] = df['Return36_List'].apply(lambda x: str_list_to_list(x))
@@ -282,6 +346,27 @@ def sharpe_calc_df(df_orig):
 
 
 def final_system(pca_df,model_36m,model_60m,p_36,p_60):
+    """
+    Creates final prediction system based on two models.
+
+    Args:
+        pca_df (pandas DataFrame): dataframe containing scaled and cleaned data.
+        model_36m (sklearn model): model to be used for predictions on 36 month term loans.
+        model_60m (sklearn model): model to be used for predictions on 60 month term loans.
+        p_36 (float): proportion for model_36m.
+        p_60 (float): proportion for model_60m.
+
+    Returns:
+        overall_return (float): Overall Return percentage
+        deployed_capital (float): Dollar amount invested in loans.
+        returned_capital (float): Returned Capital.
+        t_36_rets (float): Return percentage on 36 month term loans.
+        t_36_deployed (float): Capital invested in 36 month term loans
+        t_36_pl (float): Profit on 36 month term loans.
+        t_60_rets (float): Return percentage on 60 month term loans.
+        t_60_deployed (float): Capital invested in 60 month term loans.
+        t_60_pl (float): Profit on 60 month term loans.
+    """
     X_train, X_test, y_train, y_test = train_test_split(pca_df.iloc[:,:-1], pca_df.iloc[:,-1], test_size=0.1)
     train_set = pd.concat([X_train,y_train],axis=1)
     p1 = p_36

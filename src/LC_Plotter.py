@@ -85,10 +85,19 @@ def plot_grade_breakdown_pie(df):
 
 
 def apc(x):
+    """
+    Sets apc for use in a pie chart
+    Args:
+        x (float): percentage of total
+
+    Returns:
+        display (string): display of perentage if above 2.5%.
+    """
     if round(x,1) < 2.5:
-        return ''
+        display =  ''
     else:
-        return '{}%'.format(round(x,1))
+        display =  '{}%'.format(round(x,1))
+    return display
 
 def choro_debt_state(df):
     """
@@ -247,6 +256,15 @@ def lc_individual_profile(df_original):
 
 
 def lc_returns(df):
+    """
+    Createds dataframe displaying returns grouped by Lending Club grades.
+
+    Args:
+        df (pandas DataFrame): Lending Club Data
+
+    Returns:
+        grouped (pandas DataFrame): DataFrame displaying the returns by grade.
+    """
     grouped = df.groupby(['grade','term']).sum()[['funded_amnt','total_pymnt']]
     grouped.reset_index(inplace=True)
     grouped['return'] = (grouped['total_pymnt'] / grouped['funded_amnt'] - 1)*100
@@ -259,6 +277,17 @@ def lc_returns(df):
     return grouped
 
 def lc_plot_returns(returns,title,filepath):
+    """
+    Plots the returns by Lending Club grades.
+
+    Args:
+        returns (pandas DataFrame): DataFrame with returns grouped by Lending Club Grade.
+        title (string): Title to add to the plot.
+        filepath (string): filepath to save image into.
+
+    Returns:
+
+    """
     fig = plt.figure(figsize=(30,30))
     ax1 = fig.add_subplot(1,1,1)
     ax1.bar(returns['grade'],returns['return'])
@@ -271,6 +300,17 @@ def lc_plot_returns(returns,title,filepath):
     plt.show()
 
 def lc_plot_annualized_returns(returns,title,filepath):
+    """
+    Plots the annualized returns by Lending Club grades.
+
+    Args:
+        returns (pandas DataFrame): DataFrame with returns grouped by Lending Club Grade.
+        title (string): Title to add to the plot.
+        filepath (string): filepath to save image into.
+
+    Returns:
+
+    """
     fig = plt.figure(figsize=(30,30))
     ax2 = fig.add_subplot(1,1,1)
     ax2.bar(returns['grade'],returns['annualized_pct'])
@@ -283,307 +323,74 @@ def lc_plot_annualized_returns(returns,title,filepath):
     plt.show()
 
 
-def lc_choose_proportion(df,filepath):
-    output_df = df.iloc[1:,:]
-    fig = plt.figure(figsize=(20,20))
-    ax1 = fig.add_subplot(3,2,1)
-    ax1.scatter(output_df['Proportions'],output_df['Accuracy'])
-    ax1.tick_params('x',labelsize=15)
-    ax1.tick_params('y',labelsize=15)
-    plt.xlabel('Proportions - Fully Paid to Charged-Off',fontsize=20)
-    plt.ylabel('Accuracy',fontsize=20)
-    plt.title('Accuracy vs Proportions',fontsize=20,fontweight='bold')
-    ax2 = fig.add_subplot(3,2,2)
-    ax2.scatter(output_df['Proportions'],output_df['Precision'])
-    ax2.tick_params('x',labelsize=15)
-    ax2.tick_params('y',labelsize=15)
-    plt.ylabel('Precision',fontsize=20)
-    plt.xlabel('Proportions - Fully Paid to Charged-Off',fontsize=20)
-    plt.title('Precision vs Proportions',fontsize=20,fontweight='bold')
-    ax3 = fig.add_subplot(3,2,3)
-    ax3.scatter(output_df['Proportions'],output_df['Returns'])
-    ax3.tick_params('x',labelsize=15)
-    ax3.tick_params('y',labelsize=15)
-    plt.xlabel('Proportions - Fully Paid to Charged-Off',fontsize=20)
-    plt.ylabel('Returns',fontsize=20)
-    plt.title('Returns vs Proportions',fontsize=20,fontweight='bold')
-    ax4 = fig.add_subplot(3,2,4)
-    ax4.scatter(output_df['Accuracy'],output_df['Returns'])
-    ax4.tick_params('x',labelsize=15)
-    ax4.tick_params('y',labelsize=15)
-    plt.xlabel('Accuracy',fontsize=20)
-    plt.ylabel('Returns',fontsize=20)
-    plt.title('Returns vs Accuracy',fontsize=20,fontweight='bold')
-    ax5 = fig.add_subplot(3,2,5)
-    ax5.scatter(output_df['Precision'],output_df['Returns'])
-    ax5.tick_params('x',labelsize=15)
-    ax5.tick_params('y',labelsize=15)
-    plt.xlabel('Precision',fontsize=20)
-    plt.ylabel('Returns',fontsize=20)
-    plt.title('Returns vs Precision',fontsize=20,fontweight='bold')
-    ax6 = fig.add_subplot(3,2,6)
-    ax6.hist(output_df['Returns'])
-    ax6.tick_params('x',labelsize=15)
-    ax6.tick_params('y',labelsize=15)
-    plt.xlabel('Returns')
-    plt.ylabel('Counts')
-    plt.title('Distribution of Returns',fontsize=20,fontweight='bold')
-    plt.tight_layout()
-    plt.savefig(filepath)
-
-
-
-def lc_defaults_iplot(X_train,y_train,X_test,y_test,test_loan_data):
-    logm_stats, rfc_stats, gbc_stats, xgb_stats = LCM.lc_defaults_quick_eval(X_train,y_train,X_test,y_test,test_loan_data)
-    acc = []
-    prec = []
-    rets = []
-    count = 0
-    for i,j,k,l in zip(logm_stats,rfc_stats,gbc_stats,xgb_stats):
-        if count ==0:
-            acc.append(i)
-            acc.append(j)
-            acc.append(k)
-            acc.append(l)
-        elif count == 1:
-            prec.append(i)
-            prec.append(j)
-            prec.append(k)
-            prec.append(l)
-        else:
-            rets.append(i)
-            rets.append(j)
-            rets.append(k)
-            rets.append(l)
-        count += 1
-    fig = plt.figure(figsize = (40,40))
-    ax = fig.add_subplot(1,1,1)
-    ax.bar(height=acc,width=0.2,color='green')
-    ax.bar(height=prec,width=0.2,color='blue')
-    ax.bar(height=rets, width=0.2,color='red')
-    plt.show()
-
-
-
-
-def lc_ml(logm,rfc, gbc,xgb,filename,title):
-    logm_stats = list(logm).copy()
-    logm_stats[-1] = round((logm_stats[-1] / 100) + 1,3)
-    rfc_stats = list(rfc).copy()
-    rfc_stats[-1] = round((rfc_stats[-1] / 100) + 1,3)
-    gbc_stats = list(gbc).copy()
-    gbc_stats[-1] = round((gbc_stats[-1] / 100) + 1,3)
-    xgb_stats = list(xgb).copy()
-    xgb_stats[-1] = round((xgb_stats[-1] / 100) + 1,3)
-    data = [
-    go.Scatterpolar(
-        mode='lines+markers',
-      r = xgb_stats,
-      theta = ['XGB Acc.','XGB Prec.','XGB Ret.'],
-      fill = 'toself',
-      name = '',
-        line = dict(
-        color = "#63AF63"
-      ),
-      marker = dict(
-        color = "#B3FFB3",
-        symbol = "square",
-        size = 12
-      ),
-      subplot = "polar",
-    ),
-        go.Scatterpolar(
-        mode='lines+markers',
-      r = logm_stats,
-      theta = ['LogReg Acc.','LogReg Prec.','LogReg Ret.'],
-      fill = 'toself',
-      name = '',
-        line = dict(
-        color = "#63AF63"
-      ),
-      marker = dict(
-        color = "#B3FFB3",
-        symbol = "square",
-        size = 12
-      ),
-      subplot = "polar3",
-    ),
-        go.Scatterpolar(
-        mode='lines+markers',
-      r = rfc_stats,
-      theta = ['RFC Acc.','RFC Prec.','RFC Ret.'],
-      fill = 'toself',
-      name = '',
-        line = dict(
-        color = "#63AF63"
-      ),
-      marker = dict(
-        color = "#B3FFB3",
-        symbol = "square",
-        size = 12
-      ),
-      subplot = "polar2",
-    ),
-    go.Scatterpolar(
-        mode='lines+markers',
-      r = gbc_stats,
-      theta = ['GBC Acc.','GBC Prec.','GBC Ret.'],
-      fill = 'toself',
-      name = '',
-        line = dict(
-        color = "#63AF63"
-      ),
-      marker = dict(
-        color = "#B3FFB3",
-        symbol = "square",
-        size = 12
-      ),
-      subplot = "polar4",
-    )
-    ]
-
-    layout = go.Layout(
-        title="",
-        showlegend = False,
-         paper_bgcolor = "rgb(255, 248, 243)",
-        polar = dict(
-          domain = dict(
-            x = [0.6,1.0],
-            y = [0.0,0.4]
-          ),
-          radialaxis = dict(
-            tickfont = dict(
-              size = 8
-            )
-          ),
-          angularaxis = dict(
-            tickfont = dict(
-              size = 12
-            ),
-            rotation = 90,
-            direction = "counterclockwise"
-          )
-        ),
-        polar2 = dict(
-          domain = dict(
-            x = [0.6,1],
-            y = [0.6,1]
-          ),
-          radialaxis = dict(
-            tickfont = dict(
-              size = 8
-            )
-          ),
-          angularaxis = dict(
-            tickfont = dict(
-              size = 12
-            ),
-            rotation = 90,
-            direction = "counterclockwise"
-          ),
-        ),
-        polar3 = dict(
-          domain = dict(
-            x = [0.0,0.4],
-            y = [0.6,1.0]
-          ),
-          radialaxis = dict(
-            tickfont = dict(
-              size = 8
-            )
-          ),
-          angularaxis = dict(
-            tickfont = dict(
-              size = 12
-            ),
-            rotation = 90,
-            direction = "counterclockwise"
-          )
-        ),
-        polar4 = dict(
-          domain = dict(
-            x = [0.0,0.4],
-            y = [0.0,0.4]
-          ),
-          radialaxis = dict(
-            tickfont = dict(
-              size = 8
-
-            )
-          ),
-          angularaxis = dict(
-            tickfont = dict(
-              size = 12
-            ),
-            rotation = 90,
-            direction = "counterclockwise"
-          )
-        )
-
-    )
-
-    fig = go.Figure(data=data, layout=layout)
-    fig.update_layout(title_text=title)
-    plotly.offline.plot(fig,filename='random_ml_models',auto_open=False)
-    iplot(fig,image_width=1000,image_height=1000,filename=filename,image='png')
-
-
-
-def lc_returns_vs_thresholds(models, X_test, y_test,loan_test_data,filepath):
-    ret_list = []
-    for model in models:
-        x, rets = LCM.lc_predict_probas_evaluator(model, X_test, y_test,loan_test_data)
-        ret_list.append(rets)
-    fig = plt.figure(figsize=(20,20))
-    ax = fig.add_subplot(1,1,1)
-    ax.plot(x,ret_list[0],label='Logistic Regression')
-    ax.plot(x,ret_list[1],label='Random Forest')
-    ax.plot(x,ret_list[2],label='Gradient Boosting')
-    ax.plot(x,ret_list[3],label='XGradient Boosting')
-    plt.title('Returns vs. Threshold',fontsize=20,fontweight='bold')
-    plt.xlabel('Thresholds',fontsize=20)
-    plt.ylabel('Returns',fontsize=20)
-    ax.tick_params('x',labelsize=20)
-    ax.tick_params('y',labelsize=20)
-    plt.savefig(filepath)
-    plt.legend(loc='lower right',prop={'size': 25})
-    plt.show()
-
-
 def lc_proportions_time(df):
+    """
+    Plots the proportion of Fully Paid Off loans vs. Charged Off loans over time.
+
+    Args:
+        df (pandas DataFrame): Lending Club data.
+
+    Returns:
+
+    """
     cohort_df = (df.groupby(['issue_d_year','loan_status']).sum()['funded_amnt'] / 1000000).reset_index()
     cohort_df['proportion'] = cohort_df.apply(lambda row: prop_cohort(row,cohort_df),axis=1)
-    fig = plt.figure(figsize=(10,5))
+    fig = plt.figure(figsize=(20,15))
     ax = fig.add_subplot(1,1,1)
     ax.plot(cohort_df[cohort_df['loan_status'] ==1]['issue_d_year'],cohort_df[cohort_df['loan_status'] ==1]['proportion'],label='Fully Paid',c='blue')
     ax.plot(cohort_df[cohort_df['loan_status'] ==0]['issue_d_year'],cohort_df[cohort_df['loan_status'] ==0]['proportion'],label='Charged-Off ',c='orangered')
-    plt.xlabel('Year',fontsize=15)
-    plt.ylabel('Proportion',fontsize=15)
-    plt.title('Loan Outcome Proportions')
-    ax.tick_params('x',labelsize=15)
-    ax.tick_params('y',labelsize=15)
-    plt.legend()
+    plt.xlabel('Year',fontsize=30,fontweight='bold')
+    plt.ylabel('Proportion',fontsize=30,fontweight='bold')
+    plt.title('Loan Outcome Proportions',fontsize=40,fontweight='bold')
+    ax.tick_params('x',labelsize=25)
+    ax.tick_params('y',labelsize=25)
+    plt.legend(prop={'size': 25})
     plt.savefig('images/loan_outcome_proportions.png')
     plt.show()
 
 
 def prop_cohort(row,cohort_df):
+    """
+    Returns data column specifying the proportion of the given loan class as a percentage of total loans that reached maturity.
+
+    Args:
+        row (pandas DataFrame row): DataFrame row
+        cohort_df (pandas DataFrame): dataframe with only one type of loan outcome.
+
+    Returns:
+        prop (float): proportion of loans that the loan class comprised.
+    """
     yr = row['issue_d_year']
     yr_amnt = cohort_df[cohort_df['issue_d_year'] == yr]['funded_amnt'].sum()
-    return row['funded_amnt'] / yr_amnt
+    prop =  row['funded_amnt'] / yr_amnt
+    return prop
 
 def pca_plotter(pca_df):
+    """
+    Plots the total variance explained by the eigenmatrix generated by PCA.
+
+    Args:
+        pca_df (pandas DataFrame): dataframe generated by performing PCA on the Lending Club dataset.
+
+    Returns:
+
+    """
     scaled_df = pca_df
     pca = PCA(n_components=40)
     principalComponents = pca.fit_transform(scaled_df.iloc[:,:-4])
     principalDf = pd.DataFrame(data = principalComponents
              , columns = ['pc' + str(i) for i in range(1,41)])
     pca_df = pd.concat([principalDf,scaled_df.iloc[:,-4:]],axis=1)
-    plt.plot(np.cumsum(pca.explained_variance_ / sum(pca.explained_variance_)))
-    plt.title('PCA - Explained Variance')
-    plt.xlabel('Number of Components')
-    plt.ylabel('Variance')
-    plt.axhline(0.95,c='r',label = '95% Variance')
+    fig = plt.figure(figsize=(20,15))
+    ax = fig.add_subplot(1,1,1)
+    ax.plot(np.cumsum(pca.explained_variance_ / sum(pca.explained_variance_)),label='Cumulative Explained Variance')
+    plt.title('PCA - Explained Variance',fontsize=40,fontweight='bold')
+    plt.xlabel('Number of Components',fontsize=30,fontweight='bold')
+    plt.ylabel('Variance',fontsize=30,fontweight='bold')
+    ax.tick_params('x',labelsize=25)
+    ax.tick_params('y',labelsize=25)
+    ax.axhline(0.95,c='r',label = '95% Variance')
+    plt.legend(prop={'size':25})
     plt.savefig('images/pca_explained_variance.png')
     plt.show()
 
@@ -591,6 +398,15 @@ def pca_plotter(pca_df):
 
 
 def plot_36m_returns(returns_df):
+    """
+    Plots the 36 month returns by proportion.
+
+    Args:
+        returns_df (pandas DataFrame): Dataframe containing the gridsearch data on each proportion.
+
+    Returns:
+
+    """
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
     fig = plt.figure(figsize=(20,15))
@@ -600,13 +416,22 @@ def plot_36m_returns(returns_df):
     plt.legend(prop={'size': 25})
     ax.tick_params('x',labelsize=25)
     ax.tick_params('y',labelsize=25)
-    plt.ylabel('Returns (%)',fontsize=25)
-    plt.xlabel('Proportion of Majority to Minority Class',fontsize=25)
-    plt.title('36 Month Returns by Model and Proportion',fontsize=35,fontweight='bold')
+    plt.ylabel('Returns (%)',fontsize=30,fontweight='bold')
+    plt.xlabel('Proportion of Majority to Minority Class',fontsize=30,fontweight='bold')
+    plt.title('36 Month Returns by Model and Proportion',fontsize=40,fontweight='bold')
     plt.savefig('images/returns_36m.png')
     plt.show()
 
 def plot_60m_returns(returns_df):
+    """
+    Plots the 60 month returns by proportion.
+
+    Args:
+        returns_df (pandas DataFrame): Dataframe containing the gridsearch data on each proportion.
+
+    Returns:
+
+    """
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
     fig = plt.figure(figsize=(20,15))
@@ -616,13 +441,22 @@ def plot_60m_returns(returns_df):
     plt.legend(prop={'size': 25})
     ax2.tick_params('x',labelsize=25)
     ax2.tick_params('y',labelsize=25)
-    plt.ylabel('Returns (%)',fontsize=25)
-    plt.xlabel('Proportion of Majority to Minority Class',fontsize=25)
-    plt.title('60 Month Returns by Model and Proportion',fontsize=35,fontweight='bold')
+    plt.ylabel('Returns (%)',fontsize=30,fontweight='bold')
+    plt.xlabel('Proportion of Majority to Minority Class',fontsize=30,fontweight='bold')
+    plt.title('60 Month Returns by Model and Proportion',fontsize=40,fontweight='bold')
     plt.savefig('images/returns_60m.png')
     plt.show()
 
 def plot_rets_v_acc(return_df):
+    """
+    Plots comparison of returns vs accuracy.
+
+    Args:
+        returns_df (pandas DataFrame): Dataframe containing the gridsearch data on each proportion.
+
+    Returns:
+
+    """
     fig = plt.figure(figsize=(20,15))
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
@@ -630,15 +464,24 @@ def plot_rets_v_acc(return_df):
     for i in range(len(models)):
         ax1.scatter(return_df[return_df['model']==models[i]]['Accuracy'],return_df[return_df['model']==models[i]]['Returns'],c=colors[i],label=models[i])
     plt.legend(prop={'size': 35})
-    ax1.tick_params('x',labelsize=30)
-    ax1.tick_params('y',labelsize=30)
-    plt.ylabel('Returns (%)',fontsize=35)
-    plt.xlabel('Accuracy',fontsize=35)
+    ax1.tick_params('x',labelsize=25)
+    ax1.tick_params('y',labelsize=25)
+    plt.ylabel('Returns (%)',fontsize=30,fontweight='bold')
+    plt.xlabel('Accuracy',fontsize=30,fontweight='bold')
     plt.title('Blended Returns vs. Accuracy',fontsize=40,fontweight='bold')
     plt.savefig('images/returns_v_acc.png')
     plt.show()
 
 def plot_rets_v_prec(return_df):
+    """
+    Plots comparison of returns vs precision.
+
+    Args:
+        returns_df (pandas DataFrame): Dataframe containing the gridsearch data on each proportion.
+
+    Returns:
+
+    """
     fig = plt.figure(figsize=(20,15))
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
@@ -646,10 +489,10 @@ def plot_rets_v_prec(return_df):
     for i in range(len(models)):
         ax1.scatter(return_df[return_df['model']==models[i]]['Accuracy'],return_df[return_df['model']==models[i]]['Returns'],c=colors[i],label=models[i])
     plt.legend(prop={'size': 35})
-    ax1.tick_params('x',labelsize=30)
-    ax1.tick_params('y',labelsize=30)
-    plt.ylabel('Returns (%)',fontsize=35)
-    plt.xlabel('Precision',fontsize=35)
+    ax1.tick_params('x',labelsize=25)
+    ax1.tick_params('y',labelsize=25)
+    plt.ylabel('Returns (%)',fontsize=30,fontweight='bold')
+    plt.xlabel('Precision',fontsize=30,fontweight='bold')
     plt.title('Blended Returns vs. Precision',fontsize=40,fontweight='bold')
     plt.savefig('images/returns_v_prec')
     plt.show()
@@ -658,6 +501,15 @@ def plot_rets_v_prec(return_df):
 
 
 def plot_prec_by_prop(return_df):
+    """
+    Plots comparison of returns vs proportions.
+
+    Args:
+        returns_df (pandas DataFrame): Dataframe containing the gridsearch data on each proportion.
+
+    Returns:
+
+    """
     fig = plt.figure(figsize=(20,15))
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
@@ -665,16 +517,25 @@ def plot_prec_by_prop(return_df):
     for i in range(len(models)):
         ax.scatter(return_df[return_df['model'] == models[i]]['Proportions'],return_df[return_df['model'] == models[i]]['Precision'],label=models[i],c=colors[i])
     plt.legend(prop={'size':25})
+    plt.xlabel('Proportion',fontsize=30,fontweight='bold')
+    plt.ylabel('Precision',fontsize=30,fontweight='bold')
     ax.tick_params('x',labelsize=25)
     ax.tick_params('y',labelsize=25)
-    plt.xlabel('Proportion')
-    plt.ylabel('Precision')
-    plt.title('Precision vs. Proportion',fontsize=25,fontweight='bold')
+    plt.title('Precision vs. Proportion',fontsize=40,fontweight='bold')
     plt.savefig('images/prec_prop.png')
 
     plt.show()
 
 def plot_36m_deployed(returns_df):
+    """
+    Plots 36 month returns against the capital invested in 36 month term loans.
+
+    Args:
+        returns_df (pandas dataframe): Dataframe containing the gridsearch data on each proportion.
+
+    Returns:
+
+    """
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
     fig = plt.figure(figsize=(20,15))
@@ -684,13 +545,22 @@ def plot_36m_deployed(returns_df):
     plt.legend(prop={'size': 25})
     ax.tick_params('x',labelsize=25)
     ax.tick_params('y',labelsize=25)
-    plt.ylabel('Returns (%)',fontsize=25)
-    plt.xlabel('Deployed Capital ($ in millions)',fontsize=25)
-    plt.title('36 Month Returns on Deployed Capital',fontsize=35,fontweight='bold')
+    plt.ylabel('Returns (%)',fontsize=35,fontweight='bold')
+    plt.xlabel('Deployed Capital ($ in millions)',fontsize=35,fontweight='bold')
+    plt.title('36 Month Returns on Deployed Capital',fontsize=40,fontweight='bold')
     plt.savefig('images/returns_36m_deployed.png')
     plt.show()
 
 def plot_60m_deployed(returns_df):
+    """
+    Plots 60 month returns against the capital invested in 60 month term loans.
+
+    Args:
+        returns_df (pandas dataframe): Dataframe containing the gridsearch data on each proportion.
+
+    Returns:
+
+    """
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
     fig = plt.figure(figsize=(20,15))
@@ -700,13 +570,22 @@ def plot_60m_deployed(returns_df):
     plt.legend(prop={'size': 25})
     ax.tick_params('x',labelsize=25)
     ax.tick_params('y',labelsize=25)
-    plt.ylabel('Returns (%)',fontsize=25)
-    plt.xlabel('Deployed Capital ($ in millions)',fontsize=25)
-    plt.title('60 Month Returns on Deployed CApital',fontsize=35,fontweight='bold')
+    plt.ylabel('Returns (%)',fontsize=35,fontweight='bold')
+    plt.xlabel('Deployed Capital ($ in millions)',fontsize=35,fontweight='bold')
+    plt.title('60 Month Returns on Deployed Capital',fontsize=40,fontweight='bold')
     plt.savefig('images/returns_60m_deployed.png')
     plt.show()
 
 def profits_v_deployed(returns_df):
+    """
+    Plots profits against the capital invested in loans.
+
+    Args:
+        returns_df (pandas dataframe): Dataframe containing the gridsearch data on each proportion.
+
+    Returns:
+
+    """
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['blue','green','red']
     fig = plt.figure(figsize=(20,15))
@@ -716,17 +595,37 @@ def profits_v_deployed(returns_df):
     ax.tick_params('x',labelsize=25)
     ax.tick_params('y',labelsize=25)
     plt.legend(prop={'size': 25})
-    plt.ylabel('Profits ($ in millions)',fontsize=25)
-    plt.xlabel('Deployed Capital ($ in millions)',fontsize=25)
-    plt.title('Profits By Model',fontsize=35,fontweight='bold')
+    plt.ylabel('Profits ($ in millions)',fontsize=30,fontweight='bold')
+    plt.xlabel('Deployed Capital ($ in millions)',fontsize=30,fontweight='bold')
+    plt.title('Profits By Model',fontsize=40,fontweight='bold')
     plt.savefig('images/profits_v_deployed.png')
     plt.show()
 
 def get_list_vals(x):
+    """
+    Extracts values from a json style list.
+
+    Args:
+        x (string): string containg list of values.
+
+    Returns:
+        arr (np.array): numpy array that contains values from the original list and removes nan values.
+    """
     arr = np.array([float(j) for j in x.strip('[]').split(',')])
-    return arr[~np.isnan(arr)]
+    arr =  arr[~np.isnan(arr)]
+    return arr
 
 def plot_sharpe(df_original):
+    """
+    Creates four plots: Sharpe Ratio vs. 36 Month Deployed, Sharpe Ratio vs. 60 Month Deployed, Sharpe Ratio vs. 36 Month Returns,
+    and Sharpe Ratio vs. 60 Month Returns.
+
+    Args:
+        df_original (pandas dataframe): dataframe created from the LC_Transformer sharpe_calc function.
+
+    Returns:
+
+    """
     df = df_original
     models = ['LogisticRegression','RandomForestClassifier','GradientBoostingClassifier']
     colors = ['b','g','r']
@@ -734,41 +633,43 @@ def plot_sharpe(df_original):
     df['Avg_Deployed_60'] = df['Deployed_Capital_60'].apply(lambda x: np.mean(x)/1000000)
     df['Model'] = df['Model_list'].apply(lambda x: x.split('_')[0])
     fig = plt.figure(figsize=(20,20))
+    """
     ax1 = fig.add_subplot(2,2,1)
     for m,c in zip(models,colors):
         ax1.scatter(df[df['Model']==m]['Avg_Deployed_36'],df[df['Model']==m]['Sharpe_36'],c=c,label=m)
-    plt.title('Sharpe Ratio vs. 36 Month Deployed',fontsize=35)
+    plt.title('Sharpe Ratio vs. 36 Month Deployed',fontsize=35,fontweight='bold')
     ax1.tick_params('x',labelsize=25)
     ax1.tick_params('y',labelsize=25)
-    plt.xlabel('Deployed Capital in Millions',fontsize=25)
-    plt.ylabel('Sharpe Ratio',fontsize=25)
+    plt.xlabel('Deployed Capital in Millions',fontsize=30,fontweight='bold')
+    plt.ylabel('Sharpe Ratio',fontsize=30,fontweight='bold')
     plt.legend(prop={'size': 20})
     ax2 = fig.add_subplot(2,2,2)
     for m,c in zip(models,colors):
         ax2.scatter(df[df['Model']==m]['Avg_Deployed_36'],df[df['Model']==m]['Sharpe_60'],c=c,label=m)
-    plt.title('Sharpe Ratio vs. 60 Month Deployed',fontsize=35)
+    plt.title('Sharpe Ratio vs. 60 Month Deployed',fontsize=40,fontweight='bold')
     ax2.tick_params('x',labelsize=25)
     ax2.tick_params('y',labelsize=25)
-    plt.xlabel('Deployed Capital in Millions',fontsize=25)
-    plt.ylabel('Sharpe Ratio',fontsize=25)
+    plt.xlabel('Deployed Capital in Millions',fontsize=30,fontweight='bold')
+    plt.ylabel('Sharpe Ratio',fontsize=30,fontweight='bold')
     plt.legend(prop={'size': 20})
-    ax3 = fig.add_subplot(2,2,3)
+    """
+    ax3 = fig.add_subplot(2,1,1)
     for m,c in zip(models,colors):
         ax3.scatter(df[df['Model'] ==m]['Avg_Return_36'],df[df['Model']==m]['Sharpe_36'],c=c,label=m)
-    plt.title('Sharpe Ratio vs. 36 Month Returns',fontsize=35)
+    plt.title('Sharpe Ratio vs. 36 Month Returns',fontsize=40,fontweight='bold')
     ax3.tick_params('x',labelsize=25)
     ax3.tick_params('y',labelsize=25)
-    plt.xlabel('Returns',fontsize=25)
-    plt.ylabel('Sharpe Ratio',fontsize=25)
+    plt.xlabel('Returns',fontsize=30,fontweight='bold')
+    plt.ylabel('Sharpe Ratio',fontsize=30,fontweight='bold')
     plt.legend(prop={'size': 20})
-    ax4 = fig.add_subplot(2,2,4)
+    ax4 = fig.add_subplot(2,1,2)
     for m,c in zip(models,colors):
         ax4.scatter(df[df['Model'] ==m]['Avg_Return_60'],df[df['Model']==m]['Sharpe_60'],c=c,label=m)
-    plt.title('Sharpe Ratio vs. 60 Month Returns',fontsize=35)
+    plt.title('Sharpe Ratio vs. 60 Month Returns',fontsize=40,fontweight='bold')
     ax4.tick_params('x',labelsize=25)
     ax4.tick_params('y',labelsize=25)
-    plt.xlabel('Returns',fontsize=25)
-    plt.ylabel('Sharpe Ratio',fontsize=25)
+    plt.xlabel('Returns',fontsize=30,fontweight='bold')
+    plt.ylabel('Sharpe Ratio',fontsize=30,fontweight='bold')
     plt.legend(prop={'size': 20})
     plt.tight_layout()
     plt.savefig('images/sharpe_plot.png')
