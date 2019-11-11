@@ -114,9 +114,6 @@ From this, we can conclude the following points:
 
 ## Evaluating Returns
 
-grade_returns.png
-grade_annualized_returns.png
-
 Because Lending Club assigns grades to their loans, we can evaluate the returns by grade on both an actual return and an annualized return basis. Also, because the loans can only take two different term lengths, 36 or 60 months, we can further divide the grades by term length. We hypothesize that the highest returns should be earned by 60 month rated B-D loans as these will have a greater return compared to their respective 36 month counterparts to compensate for the additional holding time required. Also, we expect these loans to outperform others by grade because A loans will have lower rates of return because they are considered the safest and the loans rated E-G will be expected to have high chargeoff rates, diminishing returns.
 
 <img src="./images/grade_returns.png"/>
@@ -276,7 +273,7 @@ Blended Returns
   -  Mean: 13.65%
   -  Min: 13.57%
   -  Max: 13.74:
-  
+
 60 Month Loan Returns:
   -  Mean: 24.17%
   -  Min: 23.88%
