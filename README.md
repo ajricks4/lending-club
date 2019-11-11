@@ -209,7 +209,7 @@ Additionally, because there are two types of loan maturities (36 month term and 
 
 Best Models:
 |Term|Model|Model|Returns|Deployed Capital|Proportion|
-|-------------|
+|----|----|-----|-------|----------------|-----------|
 |36|GradientBoostingClassifier|20.22%|24800.00|0.045|
 |36|GradientBoostingClassifier|20.22%|24800.00|0.040|
 |36|GradientBoostingClassifier|20.22%|24800.00|0.035|
