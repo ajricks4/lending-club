@@ -267,20 +267,22 @@ Additionally we will run this 1000 times to test the robustness of the system an
 
 We see here that the system does a strong job and produces:
 
--  Blended Returns
+Blended Returns
   -  Mean: 16.80%
   -  Min: 16.69%
   -  Max: 16.91%
--  36 Month Loan Returns:
+
+36 Month Loan Returns:
   -  Mean: 13.65%
   -  Min: 13.57%
   -  Max: 13.74:
--  60 Month Loan Returns:
+  
+60 Month Loan Returns:
   -  Mean: 24.17%
   -  Min: 23.88%
   -  Max: 24.48%
 
--  Deployed Capital:
+Deployed Capital:
   -  Deployed Mean: $1.78 Billion
   -  36 Month Deployed Mean: $1.25 Billion
   -  60 Month Deployed Mean: $0.53 Billion
